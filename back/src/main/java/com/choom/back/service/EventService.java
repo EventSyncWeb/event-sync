@@ -18,6 +18,6 @@ public class EventService {
     }
 
     public void deleteEvent(UUID id) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported yet. yay");
     }
 }

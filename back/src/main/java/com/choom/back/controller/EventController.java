@@ -36,14 +36,14 @@ public class EventController {
         }
     }
 
-    @PutMapping
-    public ResponseEntity<?> updateEvent(@RequestBody EventRequest eventRequest) {
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateEvent(@PathVariable UUID id, @RequestBody EventRequest eventRequest) {
         try {
             EventValidator.validate(eventRequest);
             EventResponse event = eventService.updateEvent(eventRequest);
             return ResponseEntity.status(HttpStatus.OK).body(event);
         } catch (BadRequestException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("error", e.getMessage()));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", e.getMessage()));
         } catch (RuntimeException e) {

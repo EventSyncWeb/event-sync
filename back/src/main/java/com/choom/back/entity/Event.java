@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @Data
 public class Event {
-    private UUID is;
+    private UUID id;
     private String title;
     private String description;
     private LocalDate startDate;
