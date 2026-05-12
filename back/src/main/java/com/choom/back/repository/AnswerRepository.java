@@ -2,7 +2,6 @@ package com.choom.back.repository;
 
 import com.choom.back.config.DBConfig;
 import com.choom.back.entity.Answer;
-import com.choom.back.entity.Question;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;

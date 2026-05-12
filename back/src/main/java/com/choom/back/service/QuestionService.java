@@ -15,8 +15,8 @@ import java.util.UUID;
 public class QuestionService {
     QuestionRepository questionRepository;
 
-    public List<Question> getAllQuestion(){
-        return questionRepository.findAllQuestion();
+    public List<Question> getAllQuestions(){
+        return questionRepository.findAllQuestions();
     }
 
     public Question getQuestionById(UUID id){
@@ -29,6 +29,7 @@ public class QuestionService {
     }
 
     public Question createQuestion (Question question){
+
         return questionRepository.createQuestion(question);
     }
 

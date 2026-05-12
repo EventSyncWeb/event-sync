@@ -30,7 +30,7 @@ public class QuestionRepository {
                 question.setContent(resultSet.getString("content"));
                 question.setAuthorName(resultSet.getString("author_name"));
                 question.setCreationDate(resultSet.getTimestamp("creation_date"));
-                question.setUpvoteCount(resultSet.getInt("upvote_count"));
+                question.setUpvoteCount(resultSet.getInt(("upvote_count")));
 
                 return Optional.of(question);
             }
@@ -40,7 +40,7 @@ public class QuestionRepository {
         }
     };
 
-    public List<Question> findAllQuestion(){
+    public List<Question> findAllQuestions(){
             List<Question> questions = new ArrayList<>();
             String findAllQuery = "select id, content, author_name, creation_date,upvote_count from question";
 
@@ -53,7 +53,7 @@ public class QuestionRepository {
                     question.setContent(resultSet.getString("content"));
                     question.setAuthorName(resultSet.getString("author_name"));
                     question.setCreationDate(resultSet.getTimestamp("creation_date"));
-                    question.setUpvoteCount(resultSet.getInt("upvote_count"));
+                    question.setUpvoteCount(resultSet.getInt(("upvote_count")));
                     questions.add(question);
                 }
                 return questions;
@@ -66,7 +66,7 @@ public class QuestionRepository {
     public Question createQuestion(Question question){
 
         String saveQuestionQuery = "Insert into question (id, content,author_name, creation_date, upvote_count) " +
-                "values (?, ? , ?, ?,?) ";
+                "values (?, ? , ?, ?, ?) ";
 
         try(Connection connection = dbConfig.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(saveQuestionQuery)){

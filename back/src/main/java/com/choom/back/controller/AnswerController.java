@@ -11,10 +11,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("answer")
 public class AnswerController {
     AnswerService answerService;
 
-    @GetMapping("/answers")
+    @GetMapping
     public ResponseEntity<?> getAllAnswers(){
         try{
             return ResponseEntity.status(HttpStatus.OK).body(answerService.getAllAnswers());
@@ -27,7 +28,7 @@ public class AnswerController {
         }
     }
 
-    @GetMapping("/answer/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> getQuestionById(@PathVariable UUID id){
         try{
             Answer answer= answerService.getAnswerById(id);
@@ -43,16 +44,11 @@ public class AnswerController {
 
     @PostMapping
     public ResponseEntity<Answer> createAnswer(@RequestBody Answer answer){
-//        try{
+
         Answer answerMapped = answerService.mapToEntity(answer);
         Answer created = answerService.createAnswer(answerMapped);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
-//        }catch (IllegalArgumentException e){
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid input:" + e.getMessage());
-//        }catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body("Failed to create question: " + e.getMessage());
-//        }
+
     }
 }

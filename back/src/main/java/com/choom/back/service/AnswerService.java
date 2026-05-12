@@ -13,7 +13,7 @@ import java.util.UUID;
 public class AnswerService {
     AnswerRepository answerRepository;
 
-    public List<Answer> getAllAnswer(){
+    public List<Answer> getAllAnswers(){
         return answerRepository.findAllAnswer();
     }
 

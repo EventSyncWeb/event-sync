@@ -9,34 +9,32 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
-@RestController("question")
+@RestController
+
 public class QuestionController {
     QuestionService questionServices;
 
-    @GetMapping
-    public ResponseEntity<?> getAllQuestions(){
+    @GetMapping("/question")
+    public ResponseEntity<List<Question>> getAllQuestions(){
+         return ResponseEntity.status(HttpStatus.OK).body(questionServices.getAllQuestions());
+        }
 
-         return ResponseEntity.status(HttpStatus.OK).body(questionServices.getAllQuestion());
-
-    }
-
-    @GetMapping("/question/{id}")
+    @GetMapping("question/{id}")
     public ResponseEntity<?> getQuestionById(@PathVariable UUID id){
-
             Question question= questionServices.getQuestionById(id);
             return ResponseEntity.status(HttpStatus.OK).body(question);
-
     }
 
-    @PostMapping
-    public ResponseEntity<Question> createQuestion(@RequestBody Question question) {
-
+    @PostMapping("/question")
+    public ResponseEntity<Question> createQuestion(@RequestBody Question question){
         Question created = questionServices.createQuestion(question);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+            return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
+
 
 }
