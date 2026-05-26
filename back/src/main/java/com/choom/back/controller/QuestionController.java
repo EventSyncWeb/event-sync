@@ -14,14 +14,14 @@ import java.util.UUID;
 @RestController
 
 public class QuestionController {
-    QuestionService questionServices;
+    private final QuestionService questionServices;
 
     @GetMapping("/question")
     public ResponseEntity<List<Question>> getAllQuestions(){
          return ResponseEntity.status(HttpStatus.OK).body(questionServices.getAllQuestions());
         }
 
-    @GetMapping("question/{id}")
+    @GetMapping("/question/{id}")
     public ResponseEntity<?> getQuestionById(@PathVariable UUID id){
             Question question= questionServices.getQuestionById(id);
             return ResponseEntity.status(HttpStatus.OK).body(question);
@@ -41,6 +41,7 @@ public class QuestionController {
         questionServices.upvoteQuestion(id);
         return ResponseEntity.ok("Upvote added");
     }
+
 
 
 }

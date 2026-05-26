@@ -12,7 +12,6 @@ public class Question {
     private String content;
     private String authorName;
     private Timestamp creationDate;
-    private List<Answer> answers;
     private Integer upvoteCount;
     private Session session;
 
