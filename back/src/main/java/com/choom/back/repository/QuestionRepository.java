@@ -16,6 +16,7 @@ import java.util.UUID;
 @Repository
 public class QuestionRepository {
     private final DBConfig dbConfig;
+    private final SessionRepository sessionRepository;
 
     public Optional<Question> findQuestionById(UUID id){
         String findQuestionQuery = "select id, content, author_name, creation_date,upvote_count from question where id=?";
@@ -70,6 +71,7 @@ public class QuestionRepository {
 
         try(Connection connection = dbConfig.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(saveQuestionQuery)){
+            sessionRepository.validateActiveSession(connection);
 
             if(question.getId() == null){
                 question.setId(UUID.randomUUID());
