@@ -37,7 +37,7 @@ public class SpeakerRepository {
                 speaker.setFirstName(rs.getString("first_name"));
                 speaker.setLastName(rs.getString("last_name"));
                 speaker.setBiography(rs.getString("description"));
-                speaker.setLinkdLn(rs.getString("linkedln"));
+                speaker.setLinkdLn(rs.getString("linkedIn"));
                 speaker.setCompany(rs.getString("company"));
                 speaker.setEmail(rs.getString("email"));
                 speakers.add(speaker);
@@ -66,7 +66,7 @@ public class SpeakerRepository {
                 speaker.setFirstName(rs.getString("first_name"));
                 speaker.setLastName(rs.getString("last_name"));
                 speaker.setBiography(rs.getString("description"));
-                speaker.setLinkdLn(rs.getString("linkedln"));
+                speaker.setLinkdLn(rs.getString("linkedIn"));
                 speaker.setCompany(rs.getString("company"));
                 speaker.setEmail(rs.getString("email"));
                 return speaker;
@@ -96,7 +96,7 @@ public class SpeakerRepository {
                 speaker.setFirstName(rs.getString("first_name"));
                 speaker.setLastName(rs.getString("last_name"));
                 speaker.setBiography(rs.getString("description"));
-                speaker.setLinkdLn(rs.getString("linkedln"));
+                speaker.setLinkdLn(rs.getString("LinkedIn"));
                 speaker.setCompany(rs.getString("company"));
                 speaker.setEmail(rs.getString("email"));
                 return speaker;
@@ -107,5 +107,24 @@ public class SpeakerRepository {
         return null;
     }
 
+    public Speaker saveSpeaker(Speaker speaker) {
+        String query = " inster into speaker(session_id,first_name, last_name, description, linkedIn, company, email) values (?,?,?,?,?,?,?)";
+        try (Connection connection = dbConfig.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setObject(1, speaker.getId());
+            preparedStatement.setString(2, speaker.getFirstName());
+            preparedStatement.setString(3, speaker.getLastName());
+            preparedStatement.setString(4, speaker.getBiography());
+            preparedStatement.setString(5, speaker.getLinkdLn());
+            preparedStatement.setString(6, speaker.getCompany());
+            preparedStatement.setString(7, speaker.getEmail());
+
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return speaker;
+    }
 
 }
