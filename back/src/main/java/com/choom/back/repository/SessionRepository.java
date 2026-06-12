@@ -5,10 +5,7 @@ import com.choom.back.entity.Session;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -18,6 +15,25 @@ import java.util.UUID;
 public class SessionRepository {
 
     private DBConfig dbConfig;
+
+
+    public void validateActiveSession(Connection connection) throws SQLException {
+        String checkSessionQuery = "SELECT COUNT(*) FROM session WHERE start_time <= ? AND (end_time IS NULL OR end_time >= ?)";
+
+        try (PreparedStatement sessionStatement = connection.prepareStatement(checkSessionQuery)) {
+            Timestamp now = new Timestamp(System.currentTimeMillis());
+            sessionStatement.setTimestamp(1, now);
+            sessionStatement.setTimestamp(2, now);
+
+            ResultSet rs = sessionStatement.executeQuery();
+            rs.next();
+
+            if (rs.getInt(1) == 0) {
+                throw new IllegalStateException("No active session. Question cannot be created outside of a session.");
+            }
+        }
+    }
+
     public List<Session> findAllSession() {
         List<Session> sessionList = new ArrayList<>();
         String query = """

@@ -43,3 +43,21 @@ create table session
     capacity    integer,
     event_id    uuid references event(id)
 );
+
+create table question (
+    id uuid primary key default gen_random_uuid() not null,
+    content text not null,
+    author_name varchar(50),
+    creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    upvote_count integer
+
+);
+
+create table answer(
+    id uuid primary key default gen_random_uuid() not null,
+    content text,
+    author_name varchar(50),
+    creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    upvote_count integer,
+    question_id uuid references question(id)
+);
