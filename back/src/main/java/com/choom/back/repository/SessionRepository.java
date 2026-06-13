@@ -48,7 +48,7 @@ public class SessionRepository {
             while(resultSet.next()){
 
                 Session session = new Session();
-                session.setSessionId((UUID) resultSet.getObject("id"));
+                session.setId((UUID) resultSet.getObject("id"));
                 session.setTitle(resultSet.getString("title"));
                 session.setDescription(resultSet.getString("description"));
                 session.setStartTime(resultSet.getTimestamp("start_time").toLocalDateTime());
@@ -77,7 +77,7 @@ public class SessionRepository {
             ResultSet resultSet = preparedStatement.executeQuery();
             while(resultSet.next()){
                 Session session = new Session();
-                session.setSessionId((UUID) resultSet.getObject("id"));
+                session.setId((UUID) resultSet.getObject("id"));
                 session.setTitle(resultSet.getString("title"));
                 session.setDescription(resultSet.getString("description"));
                 session.setStartTime(resultSet.getTimestamp("start_time").toLocalDateTime());
@@ -108,7 +108,7 @@ public class SessionRepository {
             ResultSet resultSet = preparedStatement.executeQuery();
             while(resultSet.next()){
                 Session session = new Session();
-                session.setSessionId((UUID) resultSet.getObject("id"));
+                session.setId((UUID) resultSet.getObject("id"));
                 session.setTitle(resultSet.getString("title"));
                 session.setDescription(resultSet.getString("description"));
                 session.setStartTime(resultSet.getTimestamp("start_time").toLocalDateTime());
@@ -127,18 +127,19 @@ public class SessionRepository {
     public Session createSession(Session session) {
         String query = """
                 INSERT INTO session (id, title, description, start_time, end_time, room_id, capacity, event_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """;
 
         try(Connection connection = dbConfig.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setObject(1, session.getSessionId());
+            preparedStatement.setObject(1, session.getId());
             preparedStatement.setString(2, session.getTitle());
             preparedStatement.setString(3, session.getDescription());
             preparedStatement.setObject(4, session.getStartTime());
             preparedStatement.setObject(5, session.getEndTime());
             preparedStatement.setObject(6, session.getRoom());
-            preparedStatement.setObject(7, session.getEventId());
+            preparedStatement.setObject(7, session.getCapacity());
+            preparedStatement.setObject(8, session.getEventId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -151,7 +152,7 @@ public class SessionRepository {
     public Session updateSession(Session session) {
         String query = """
                 UPDATE session
-                SET title = ?, description = ?, start_time = ?, end_time = ?, room_id = ?, capacity = ?, event_id = ?
+                SET title = ?, description = ?, start_time = ?, end_time = ?, room_id = ?, = ?, event_id = ?
                 WHERE id = ?
         """;
         try(Connection connection = dbConfig.getConnection();
@@ -161,8 +162,8 @@ public class SessionRepository {
             preparedStatement.setObject(3, session.getStartTime());
             preparedStatement.setObject(4, session.getEndTime());
             preparedStatement.setObject(5, session.getRoom());
-            preparedStatement.setObject(6, session.getEventId());
-            preparedStatement.setObject(7, session.getSessionId());
+            preparedStatement.setObject(7, session.getEventId());
+            preparedStatement.setObject(8, session.getId());
 
             preparedStatement.executeUpdate();
         }catch (SQLException e) {
@@ -203,8 +204,9 @@ public class SessionRepository {
 
     public boolean existsSessionById(UUID id) {
         String query = """
-                        SELECT COUNT(id) 
+                        SELECT COUNT(id)
                         FROM session
+                        WHERE id = ?
         """;
 
         try (Connection connection = dbConfig.getConnection();
