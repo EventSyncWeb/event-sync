@@ -32,12 +32,9 @@ export async function createQuestion(questionData) {
 }
 
 export async function upvoteQuestion(id) {
-  const res = await fetch(
-    `${API_BASE_URL}/question/${id}/upvote`,
-    {
-      method: "PUT",
-    }
-  );
+  const res = await fetch(`${API_BASE_URL}/question/${id}/upvote`, {
+    method: "PUT",
+  });
 
   if (!res.ok) throw new Error("Upvote failed");
   return res.text();
