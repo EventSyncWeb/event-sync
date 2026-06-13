@@ -1,11 +1,13 @@
 -- update Speaker table, add other proprieties
-ALTER TABLE "Speaker" ADD COLUMN IF NOT EXISTS first_name VARCHAR(150);
-ALTER TABLE "Speaker" ADD COLUMN IF NOT EXISTS last_name VARCHAR(150);
-ALTER TABLE "Speaker" ADD COLUMN IF NOT EXISTS description VARCHAR(250);
-ALTER TABLE "Speaker" ADD COLUMN IF NOT EXISTS Linkedln VARCHAR(150);
-ALTER TABLE "Speaker" ADD COLUMN IF NOT EXISTS company VARCHAR(150);
-ALTER TABLE "Speaker" ADD COLUMN IF NOT EXISTS email VARCHAR(150);
 
+ALTER TABLE Speaker ADD COLUMN IF NOT EXISTS first_name VARCHAR(150);
+ALTER TABLE Speaker ADD COLUMN IF NOT EXISTS last_name VARCHAR(150);
+ALTER TABLE Speaker ADD COLUMN IF NOT EXISTS description VARCHAR(250);
+ALTER TABLE Speaker ADD COLUMN IF NOT EXISTS Linkedln VARCHAR(150);
+ALTER TABLE Speaker ADD COLUMN IF NOT EXISTS company VARCHAR(150);
+ALTER TABLE Speaker ADD COLUMN IF NOT EXISTS email VARCHAR(150);
+
+create table Speaker();
 
 create table admin
 (
@@ -51,13 +53,4 @@ create table question (
     creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     upvote_count integer
 
-);
-
-create table answer(
-    id uuid primary key default gen_random_uuid() not null,
-    content text,
-    author_name varchar(50),
-    creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    upvote_count integer,
-    question_id uuid references question(id)
 );
