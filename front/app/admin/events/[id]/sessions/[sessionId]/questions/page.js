@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getAllQuestions } from "@/app/services/questionService";
+import { getAllQuestions } from "@/services/questionService";
 
 export default function SessionQuestionsPage({ params: paramsPromise }) {
   const [params, setParams] = useState(null);
@@ -32,10 +32,7 @@ export default function SessionQuestionsPage({ params: paramsPromise }) {
           {questions
             .sort((a, b) => (b.upvoteCount || 0) - (a.upvoteCount || 0))
             .map((q) => (
-              <div
-                key={q.id}
-                className="rounded border bg-white p-4 shadow-sm"
-              >
+              <div key={q.id} className="rounded border bg-white p-4 shadow-sm">
                 <p className="font-medium">{q.content}</p>
                 <p className="mt-1 text-sm text-gray-500">
                   {q.authorName || "Anonyme"} — {q.upvoteCount || 0} votes
