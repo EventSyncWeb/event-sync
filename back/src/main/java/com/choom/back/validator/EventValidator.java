@@ -20,7 +20,7 @@ public class EventValidator {
         if(eventRequest.getStartDate() == null) {
             message += "Start date field cannot empty ";
         }
-        if(!eventRequest.getStartDate().isAfter(eventRequest.getEndDate())) {
+        if(!eventRequest.getEndDate().isAfter(eventRequest.getStartDate())) {
             message += "Start date should be after end date ";
         }
         if(eventRequest.getEndDate() == null) {

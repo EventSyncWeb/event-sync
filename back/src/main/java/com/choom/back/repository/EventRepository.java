@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -36,7 +38,7 @@ public class EventRepository {
                 event.setId(returnedId);
                 event.setTitle(eventRequest.getTitle());
                 event.setDescription(eventRequest.getDescription());
-                eventRequest.setStartDate(eventRequest.getStartDate());
+                event.setStartDate(eventRequest.getStartDate());
                 event.setEndDate(eventRequest.getEndDate());
                 event.setLocation(eventRequest.getLocation());
             }
@@ -69,7 +71,7 @@ public class EventRepository {
                 event.setId(returnedId);
                 event.setTitle(eventRequest.getTitle());
                 event.setDescription(eventRequest.getDescription());
-                eventRequest.setStartDate(eventRequest.getStartDate());
+                event.setStartDate(eventRequest.getStartDate());
                 event.setEndDate(eventRequest.getEndDate());
                 event.setLocation(eventRequest.getLocation());
             }
@@ -81,20 +83,68 @@ public class EventRepository {
     }
 
     public String deleteEvent(UUID id) {
-        String message = "";
         String query = """
                 DELETE FROM event WHERE id = ?;
         """;
         try(Connection connection = dbConfig.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setObject(1, id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Internal Server Error");
+        }
+        return "Event with id: " + id + " has been deleted.";
+    }
+
+    public List<Event> findAllEvents() {
+        List<Event> events = new ArrayList<>();
+        String query = """
+                SELECT id, title, description, start_date, end_date, location
+                FROM event
+                ORDER BY start_date;
+        """;
+        try (Connection connection = dbConfig.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             ResultSet resultSet = preparedStatement.executeQuery();
-            if(resultSet.next()) {
-                message = "Event with id: " + id + " has been deleted.";
+            while (resultSet.next()) {
+                Event event = new Event();
+                event.setId((UUID) resultSet.getObject("id"));
+                event.setTitle(resultSet.getString("title"));
+                event.setDescription(resultSet.getString("description"));
+                event.setStartDate(resultSet.getDate("start_date").toLocalDate());
+                event.setEndDate(resultSet.getDate("end_date").toLocalDate());
+                event.setLocation(resultSet.getString("location"));
+                events.add(event);
             }
         } catch (SQLException e) {
             throw new RuntimeException("Internal Server Error");
         }
-        return message;
+        return events;
+    }
+
+    public Event findEventById(UUID id) {
+        String query = """
+                SELECT id, title, description, start_date, end_date, location
+                FROM event
+                WHERE id = ?;
+        """;
+        try (Connection connection = dbConfig.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setObject(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                Event event = new Event();
+                event.setId((UUID) resultSet.getObject("id"));
+                event.setTitle(resultSet.getString("title"));
+                event.setDescription(resultSet.getString("description"));
+                event.setStartDate(resultSet.getDate("start_date").toLocalDate());
+                event.setEndDate(resultSet.getDate("end_date").toLocalDate());
+                event.setLocation(resultSet.getString("location"));
+                return event;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Internal Server Error");
+        }
+        return null;
     }
 }
