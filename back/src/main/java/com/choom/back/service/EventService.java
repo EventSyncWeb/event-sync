@@ -1,6 +1,7 @@
 package com.choom.back.service;
 
 import com.choom.back.dto.EventResponse;
+import com.choom.back.repository.EventRepository;
 import com.sun.jdi.request.EventRequest;
 import org.springframework.stereotype.Service;
 
@@ -8,9 +9,10 @@ import java.util.UUID;
 
 @Service
 public class EventService {
+    private final EventRepository eventRepository;
 
-    public void createEvent(EventRequest eventRequest) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public EventResponse createEvent(EventRequest eventRequest) {
+
     }
 
     public EventResponse updateEvent(EventRequest eventRequest) {
