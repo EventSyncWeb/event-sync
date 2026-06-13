@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, use, Suspense } from "react";
-import { getAllQuestions } from "@/app/services/questionService";
+import { getAllQuestions } from "@/services/questionService";
 import QuestionForm from "./questionForm";
 import QuestionList from "./questionList";
 

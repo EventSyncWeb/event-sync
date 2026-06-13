@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { createQuestion } from "@/app/services/questionService";
+import { createQuestion } from "@/services/questionService";
 
 export default function QuestionForm({ onQuestionAdded }) {
   const [content, setContent] = useState("");

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { upvoteQuestion } from "@/app/services/questionService";
+import { upvoteQuestion } from "@/services/questionService";
 
 export default function QuestionList({ questions, onUpvote }) {
   const [upvotedIds, setUpvotedIds] = useState(new Set());
@@ -31,7 +31,9 @@ export default function QuestionList({ questions, onUpvote }) {
     );
   }
 
-  const sorted = [...questions].sort((a, b) => (b.upvotes ?? 0) - (a.upvotes ?? 0));
+  const sorted = [...questions].sort(
+    (a, b) => (b.upvotes ?? 0) - (a.upvotes ?? 0),
+  );
 
   return (
     <ul className="flex flex-col gap-3">
