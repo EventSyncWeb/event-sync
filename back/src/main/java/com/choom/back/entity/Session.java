@@ -9,9 +9,10 @@ import java.util.UUID;
 @Data
 public class Session {
     private UUID eventId;
-    private UUID SessionId;
+    private UUID id;
     private String title;
     private String description;
+    private Integer capacity;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private UUID room;

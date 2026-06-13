@@ -49,7 +49,7 @@ public class SessionService {
 
     public Session updateSession(UUID id, Session session){
         sessionValidator.UpdateValidate(id, session);
-        session.setSessionId(id);
+        session.setId(id);
 
         Session updated = sessionRepository.updateSession(session);
         if(updated == null){
@@ -58,9 +58,10 @@ public class SessionService {
         return session;
     }
     public void deleteSession(UUID id){
-        sessionRepository.deleteSessionById(id);
-
-        throw new RuntimeException("Not implemented yet");
+        if(!sessionRepository.existsSessionById(id)) {
+            throw new NotFoundException("Session with id " + id + " not found");
         }
+        sessionRepository.deleteSessionById(id);
+    }
 
 }
