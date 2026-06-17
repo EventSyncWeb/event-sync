@@ -9,12 +9,20 @@ export default function Home() {
         Consultez le programme, posez vos questions et interagissez avec les
         intervenants.
       </p>
-      <Link
-        href="/events"
-        className="rounded bg-indigo-600 px-6 py-3 text-white hover:bg-indigo-700"
-      >
-        Voir les événements
-      </Link>
+      <div className="flex gap-4">
+        <Link
+          href="/events"
+          className="rounded bg-indigo-600 px-6 py-3 text-white hover:bg-indigo-700"
+        >
+          Voir les événements
+        </Link>
+        <Link
+          href="/speakers"
+          className="rounded border border-indigo-600 px-6 py-3 text-indigo-600 hover:bg-indigo-50"
+        >
+          Voir les intervenants
+        </Link>
+      </div>
     </div>
   );
 }
