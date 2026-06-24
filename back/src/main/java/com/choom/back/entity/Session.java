@@ -16,5 +16,7 @@ public class Session {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private UUID room;
+    private String roomName;
     private List<Question> questions;
+    private List<Speaker> speakers;
 }
