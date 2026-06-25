@@ -66,7 +66,7 @@ public class SessionController {
         }
     }
 
-    @PutMapping("{sessionId}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateSession(@PathVariable UUID id, @RequestBody Session session) {
         try {
             Session updatedSession = sessionService.updateSession(id, session);

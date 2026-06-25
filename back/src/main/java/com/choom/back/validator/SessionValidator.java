@@ -41,7 +41,7 @@ public class SessionValidator {
         }
 
         if(session.getStartTime() != null && session.getEndTime() != null
-                && session.getEndTime().isAfter(session.getStartTime())) {
+                && !session.getEndTime().isAfter(session.getStartTime())) {
             message += "Start time must be before end time";
         }
 

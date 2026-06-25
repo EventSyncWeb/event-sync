@@ -22,11 +22,11 @@ public class SessionService {
     }
 
     public Session getSessionById(UUID id){
-        try {
-            return sessionRepository.findSessionById(id);
-        } catch (NotFoundException e){
+        Session session = sessionRepository.findSessionById(id);
+        if (session == null) {
             throw new NotFoundException("Session with id " + id + " not found");
         }
+        return session;
     }
 
     public List<Session> getSessionByEventId(UUID eventId){
@@ -44,7 +44,7 @@ public class SessionService {
         if(created == null){
             throw new BadRequestException("Failed to create session");
         }
-        return session;
+        return created;
     }
 
     public Session updateSession(UUID id, Session session){
@@ -55,7 +55,7 @@ public class SessionService {
         if(updated == null){
            throw new BadRequestException("Failed to update session");
         }
-        return session;
+        return updated;
     }
     public void deleteSession(UUID id){
         if(!sessionRepository.existsSessionById(id)) {

@@ -16,7 +16,7 @@ export default function SessionCard({ session, speakers = [] }) {
           </div>
           <p className="mt-0.5 text-sm text-gray-500">
             {session.startTime} — {session.endTime}
-            {session.room && ` · salle ${session.room}`}
+            {session.roomName && ` · salle ${session.roomName}`}
           </p>
           <p className="mt-1 text-sm text-gray-600 line-clamp-2">
             {session.description}

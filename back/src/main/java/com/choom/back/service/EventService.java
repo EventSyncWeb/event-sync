@@ -16,7 +16,10 @@ import java.util.UUID;
 public class EventService {
     private final EventRepository eventRepository;
 
-    public List<Event> getAllEvents() {
+    public List<Event> getAllEvents(String query) {
+        if (query != null && !query.trim().isEmpty()) {
+            return eventRepository.findEventsByTitle(query.trim());
+        }
         return eventRepository.findAllEvents();
     }
 
