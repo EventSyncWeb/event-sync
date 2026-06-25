@@ -14,7 +14,7 @@ public class DBConfig {
             String url = System.getenv("SPRING_DATASOURCE_URL");
             String username = System.getenv("SPRING_DATASOURCE_USERNAME");
             String password = System.getenv("SPRING_DATASOURCE_PASSWORD");
-            return DriverManager.getConnection(url, username, password);
+            return DriverManager.getConnection("jdbc:postgresql://localhost:5432/eventsync", "postgres", "postgres");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
