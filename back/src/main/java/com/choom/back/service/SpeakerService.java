@@ -22,8 +22,8 @@ public class SpeakerService {
         return speakerRepository.findSpeakerById(id);
     }
 
-    public Speaker getSpeakerBySessionId(UUID sessionId) {
-        return speakerRepository.findSpeakerBySessiontId(sessionId);
+    public List<Speaker> getSpeakersBySessionId(UUID sessionId) {
+        return speakerRepository.findSpeakersBySessionId(sessionId);
     }
 
     public Speaker createSpeaker(Speaker speaker) {

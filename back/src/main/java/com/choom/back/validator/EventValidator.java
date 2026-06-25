@@ -20,16 +20,13 @@ public class EventValidator {
         if(eventRequest.getStartDate() == null) {
             message += "Start date field cannot empty ";
         }
-        assert eventRequest.getStartDate() != null;
-        if(!eventRequest.getStartDate().isAfter(eventRequest.getEndDate())) {
+        if(!eventRequest.getEndDate().isAfter(eventRequest.getStartDate())) {
             message += "Start date should be after end date ";
         }
         if(eventRequest.getEndDate() == null) {
             message += "End date field cannot empty ";
         }
         String startDateString = eventRequest.getStartDate().toString();
-
-        assert eventRequest.getEndDate() != null;
         String endDateString = eventRequest.getEndDate().toString();
         if(!startDateString.matches("\\d{4}-\\d{2}-\\d{2}")) {
             message += "Start date should be in the format yyyy-mm-dd ";
