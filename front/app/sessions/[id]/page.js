@@ -55,7 +55,7 @@ export default async function SessionPage({ params }) {
         </div>
         <p className="mt-1 text-sm text-gray-500">
           {session.startTime} — {session.endTime}
-          {session.room && ` · salle ${session.room}`}
+          {session.roomName && ` · salle ${session.roomName}`}
         </p>
         <p className="mt-2 text-gray-600">{session.description}</p>
       </div>
