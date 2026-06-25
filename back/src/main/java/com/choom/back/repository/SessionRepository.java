@@ -259,9 +259,11 @@ public class SessionRepository {
     private List<Speaker> findSpeakersForSession(UUID sessionId) {
         List<Speaker> speakers = new ArrayList<>();
         String query = """
-                SELECT s.id, s.first_name, s.last_name, s.description, s.linkedIn, s.company, s.email
+                SELECT s.id, s.first_name, s.last_name, s.description, s.linkedIn, s.company, s.email,
+                       sess.title AS session_title
                 FROM speaker s
                 JOIN session_speakers ss ON s.id = ss.speaker_id
+                LEFT JOIN session sess ON ss.session_id = sess.id
                 WHERE ss.session_id = ?
                 """;
 
@@ -272,6 +274,8 @@ public class SessionRepository {
             while (rs.next()) {
                 Speaker speaker = new Speaker();
                 speaker.setId((UUID) rs.getObject("id"));
+                speaker.setSessionId(sessionId);
+                speaker.setSessionTitle(rs.getString("session_title"));
                 speaker.setFirstName(rs.getString("first_name"));
                 speaker.setLastName(rs.getString("last_name"));
                 speaker.setBiography(rs.getString("description"));

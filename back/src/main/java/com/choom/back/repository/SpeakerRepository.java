@@ -21,9 +21,12 @@ public class SpeakerRepository {
     public List<Speaker> findAllSpeaker() {
         List<Speaker> speakers = new ArrayList<>();
         String query = """
-            SELECT id, first_name, last_name, description, linkedIn, company, email
-            FROM speaker
-            ORDER BY id; 
+            SELECT s.id, s.first_name, s.last_name, s.description, s.linkedIn, s.company, s.email,
+                   ss.session_id, sess.title AS session_title
+            FROM speaker s
+            LEFT JOIN session_speakers ss ON s.id = ss.speaker_id
+            LEFT JOIN session sess ON ss.session_id = sess.id
+            ORDER BY s.id; 
         """;
 
         try (Connection con = dbConfig.getConnection();
@@ -38,11 +41,39 @@ public class SpeakerRepository {
         return speakers;
     }
 
+    public List<Speaker> findSpeakersByName(String query) {
+        List<Speaker> speakers = new ArrayList<>();
+        String sql = """
+                SELECT s.id, s.first_name, s.last_name, s.description, s.linkedIn, s.company, s.email,
+                       ss.session_id, sess.title AS session_title
+                FROM speaker s
+                LEFT JOIN session_speakers ss ON s.id = ss.speaker_id
+                LEFT JOIN session sess ON ss.session_id = sess.id
+                WHERE s.first_name ILIKE ? OR s.last_name ILIKE ?
+                ORDER BY s.id;
+        """;
+        try (Connection con = dbConfig.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setString(1, "%" + query + "%");
+            stmt.setString(2, "%" + query + "%");
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                speakers.add(mapSpeaker(rs));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return speakers;
+    }
+
     public Speaker findSpeakerById(UUID id) {
         String query = """
-                SELECT id, first_name, last_name, description, linkedIn, company, email
-                FROM speaker
-                WHERE id = ?;
+                SELECT s.id, s.first_name, s.last_name, s.description, s.linkedIn, s.company, s.email,
+                       ss.session_id, sess.title AS session_title
+                FROM speaker s
+                LEFT JOIN session_speakers ss ON s.id = ss.speaker_id
+                LEFT JOIN session sess ON ss.session_id = sess.id
+                WHERE s.id = ?;
                 """;
 
         try(Connection con = dbConfig.getConnection();
@@ -62,9 +93,11 @@ public class SpeakerRepository {
     public List<Speaker> findSpeakersBySessionId(UUID sessionId) {
         List<Speaker> speakers = new ArrayList<>();
         String query = """
-                SELECT s.id, s.first_name, s.last_name, s.description, s.linkedIn, s.company, s.email
+                SELECT s.id, s.first_name, s.last_name, s.description, s.linkedIn, s.company, s.email,
+                       ss.session_id, sess.title AS session_title
                 FROM speaker s
                 JOIN session_speakers ss ON s.id = ss.speaker_id
+                LEFT JOIN session sess ON ss.session_id = sess.id
                 WHERE ss.session_id = ?
                 """;
 
@@ -90,6 +123,8 @@ public class SpeakerRepository {
         speaker.setLinkedIn(rs.getString("linkedIn"));
         speaker.setCompany(rs.getString("company"));
         speaker.setEmail(rs.getString("email"));
+        speaker.setSessionId(rs.getObject("session_id") != null ? (UUID) rs.getObject("session_id") : null);
+        speaker.setSessionTitle(rs.getString("session_title"));
         return speaker;
     }
 

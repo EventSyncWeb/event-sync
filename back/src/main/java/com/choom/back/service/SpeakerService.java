@@ -14,7 +14,10 @@ public class SpeakerService {
 
     private final SpeakerRepository speakerRepository;
 
-    public List<Speaker> getAllSpeakers() {
+    public List<Speaker> getAllSpeakers(String query) {
+        if (query != null && !query.trim().isEmpty()) {
+            return speakerRepository.findSpeakersByName(query.trim());
+        }
         return speakerRepository.findAllSpeaker();
     }
 

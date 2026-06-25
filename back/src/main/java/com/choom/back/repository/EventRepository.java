@@ -122,6 +122,34 @@ public class EventRepository {
         return events;
     }
 
+    public List<Event> findEventsByTitle(String query) {
+        List<Event> events = new ArrayList<>();
+        String sql = """
+                SELECT id, title, description, start_date, end_date, location
+                FROM event
+                WHERE title ILIKE ?
+                ORDER BY start_date;
+        """;
+        try (Connection connection = dbConfig.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, "%" + query + "%");
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Event event = new Event();
+                event.setId((UUID) rs.getObject("id"));
+                event.setTitle(rs.getString("title"));
+                event.setDescription(rs.getString("description"));
+                event.setStartDate(rs.getDate("start_date").toLocalDate());
+                event.setEndDate(rs.getDate("end_date").toLocalDate());
+                event.setLocation(rs.getString("location"));
+                events.add(event);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Internal Server Error");
+        }
+        return events;
+    }
+
     public Event findEventById(UUID id) {
         String query = """
                 SELECT id, title, description, start_date, end_date, location
