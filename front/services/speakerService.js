@@ -1,7 +1,8 @@
 import { apiGet, apiPost } from "./api";
 
-export async function getAllSpeakers() {
-  return apiGet("/speakers");
+export async function getAllSpeakers(q) {
+  const params = q ? `?q=${encodeURIComponent(q)}` : "";
+  return apiGet(`/speakers${params}`);
 }
 
 export async function getSpeaker(id) {

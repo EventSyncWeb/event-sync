@@ -1,7 +1,8 @@
 import { apiGet, apiPost, apiPut, apiDelete } from "./api";
 
-export async function getEvents() {
-  return apiGet("/api/events");
+export async function getEvents(q) {
+  const params = q ? `?q=${encodeURIComponent(q)}` : "";
+  return apiGet(`/api/events${params}`);
 }
 
 export async function getEvent(id) {

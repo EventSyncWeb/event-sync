@@ -20,6 +20,12 @@ export default function Header() {
             Événements
           </Link>
           <Link
+            href="/dashboard"
+            className="text-sm text-gray-600 hover:text-indigo-600"
+          >
+            Programme
+          </Link>
+          <Link
             href="/speakers"
             className="text-sm text-gray-600 hover:text-indigo-600"
           >
