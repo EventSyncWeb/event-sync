@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -14,6 +16,32 @@ import java.util.UUID;
 public class EventRepository {
 
     private final DBConfig dbConfig;
+
+    public List<Event> getEventList() {
+        List<Event> eventList = new ArrayList<>();
+        String query = """
+                SELECT id, title, description, start_date, end_date, location
+                FROM event
+                """;
+        try (Connection connection = dbConfig.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                Event event = new Event();
+                UUID id = (UUID) resultSet.getObject("id");
+                event.setId(id);
+                event.setTitle(resultSet.getString("title"));
+                event.setDescription(resultSet.getString("description"));
+                event.setStartDate(resultSet.getDate("start_date").toLocalDate());
+                event.setEndDate(resultSet.getDate("end_date").toLocalDate());
+                event.setLocation(resultSet.getString("location"));
+                eventList.add(event);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Internal Server Error");
+        }
+        return eventList;
+    }
 
     public Event createEvent(EventRequest eventRequest) {
         Event event = new Event();
