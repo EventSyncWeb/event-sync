@@ -1,6 +1,7 @@
 package com.choom.back.validator;
 
 import com.choom.back.entity.Session;
+import com.choom.back.exception.BadRequestException;
 import com.choom.back.repository.SessionRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -9,7 +10,6 @@ import java.util.UUID;
 
 @Component
 @AllArgsConstructor
-
 public class SessionValidator {
     private SessionRepository sessionRepository;
 
@@ -20,59 +20,53 @@ public class SessionValidator {
             message += "Session is null";
         }
 
-        if(session.getSessionId() == null) {
-            message += "Session ID is required";
-        }
-
         if(session.getEventId() == null) {
             message += "Event ID is required";
         }
 
-        if(session.getTitle() == null || session.getTitle().isEmpty()) {
+        if(session.getTitle() == null || session.getTitle().isBlank()) {
             message += "Title is required";
         }
 
-        if(session.getDescription() == null || session.getDescription().isEmpty()) {
+        if(session.getDescription() == null || session.getDescription().isBlank()) {
             message += "Description is required";
         }
 
-        if(session.getStartTime().isAfter(session.getEndTime())) {
-            message += "Start time is after end time";
+        if(session.getStartTime() == null) {
+            message += "Start time is required";
         }
 
-        if(session.getRoom() == null || !session.getRoom().equals(session.getRoom())) {
-            message += "Either room number is incorrect or the room doesn't exist";
+        if(session.getEndTime() == null) {
+            message += "End time is required";
         }
 
-        if(session.getSessionId() != null && sessionRepository.existsSessionById(session.getSessionId())) {
-            message += "Session with id: "+ session.getSessionId() + " already exists";
+        if(session.getStartTime() != null && session.getEndTime() != null
+                && session.getEndTime().isAfter(session.getStartTime())) {
+            message += "Start time must be before end time";
+        }
+
+        if(session.getRoom() == null) {
+            message += "Room is required";
         }
 
         if(!message.isEmpty()) {
-            throw new RuntimeException(message);
+            throw new BadRequestException(message);
         }
     }
 
     public void ExistingValidate(UUID id) {
-        String message = "";
-
         if(id == null) {
-            message += "Session ID is required";
+            throw new BadRequestException("Session ID is required");
         }
 
-
-
-        if(!message.isEmpty()) {
-            throw new RuntimeException(message);
-        }
-
-        if(id != null && !sessionRepository.existsSessionById(id)) {
-            message += "Session with id: "+ id + " does not exist";
+        if(!sessionRepository.existsSessionById(id)) {
+            throw new BadRequestException("Session with id: " + id + " does not exist");
         }
     }
 
     public void UpdateValidate(UUID id, Session session) {
         String message = "";
+
         if(id == null) {
             message += "Session ID is required";
         }
@@ -93,23 +87,25 @@ public class SessionValidator {
             message += "Description is required";
         }
 
-        if(session.getStartTime().isAfter(session.getEndTime())) {
-            message += "Start time is after end time";
+        if(session.getStartTime() == null) {
+            message += "Start time is required";
         }
 
-        if(session.getRoom() == null || !session.getRoom().equals(session.getRoom())) {
-            message += "Room number is incorrect or the room doesn't exist";
+        if(session.getEndTime() == null) {
+            message += "End time is required";
         }
 
-        if(session.getSessionId() != null && sessionRepository.existsSessionById(session.getSessionId())) {
-            message += "Session with id: "+ session.getSessionId() + " already exists";
+        if(session.getStartTime() != null && session.getEndTime() != null
+                && session.getStartTime().isAfter(session.getEndTime())) {
+            message += "Start time must be before end time";
         }
 
-        if(session.getDescription() == null || session.getDescription().isBlank()) {
-            message += "Description is required";
+        if(session.getRoom() == null) {
+            message += "Room is required";
         }
 
-
+        if(!message.isEmpty()) {
+            throw new BadRequestException(message);
+        }
     }
-
 }

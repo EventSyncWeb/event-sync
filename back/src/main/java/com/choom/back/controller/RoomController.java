@@ -1,12 +1,9 @@
 package com.choom.back.controller;
 
-import com.choom.back.dto.EventRequest;
-import com.choom.back.entity.Event;
-import com.choom.back.exception.AuthenticationException;
+import com.choom.back.entity.Room;
 import com.choom.back.exception.BadRequestException;
 import com.choom.back.exception.NotFoundException;
-import com.choom.back.service.EventService;
-import com.choom.back.validator.EventValidator;
+import com.choom.back.service.RoomService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,28 +13,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@AllArgsConstructor
 @RestController
-@RequestMapping("api/events")
-public class EventController {
-    private final EventService eventService;
-    private final EventValidator eventValidator;
+@RequestMapping("/api/rooms")
+@AllArgsConstructor
+public class RoomController {
+    private final RoomService roomService;
 
     @GetMapping
-    public ResponseEntity<?> getAllEvents() {
+    public ResponseEntity<?> getAllRooms() {
         try {
-            List<Event> events = eventService.getAllEvents();
-            return ResponseEntity.ok(events);
+            List<Room> rooms = roomService.getAllRooms();
+            return ResponseEntity.ok(rooms);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
         }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getEventById(@PathVariable UUID id) {
+    public ResponseEntity<?> getRoomById(@PathVariable UUID id) {
         try {
-            Event event = eventService.getEventById(id);
-            return ResponseEntity.ok(event);
+            Room room = roomService.getRoomById(id);
+            return ResponseEntity.ok(room);
         } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
         } catch (RuntimeException e) {
@@ -46,42 +42,36 @@ public class EventController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createEvent(@RequestBody EventRequest eventRequest) {
+    public ResponseEntity<?> createRoom(@RequestBody Room room) {
         try {
-            eventValidator.validate(eventRequest);
-            Event event = eventService.createEvent(eventRequest);
-            return ResponseEntity.status(HttpStatus.CREATED).body(event);
+            Room created = roomService.createRoom(room);
+            return ResponseEntity.status(HttpStatus.CREATED).body(created);
         } catch (BadRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
-        } catch (AuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", e.getMessage()));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateEvent(@PathVariable UUID id, @RequestBody EventRequest eventRequest) {
+    public ResponseEntity<?> updateRoom(@PathVariable UUID id, @RequestBody Room room) {
         try {
-            eventValidator.validate(eventRequest);
-            Event event = eventService.updateEvent(id, eventRequest);
-            return ResponseEntity.status(HttpStatus.OK).body(event);
+            Room updated = roomService.updateRoom(id, room);
+            return ResponseEntity.ok(updated);
         } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
         } catch (BadRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
-        } catch (AuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", e.getMessage()));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteEvent(@PathVariable UUID id) {
+    public ResponseEntity<?> deleteRoom(@PathVariable UUID id) {
         try {
-            eventService.deleteEvent(id);
-            return ResponseEntity.status(HttpStatus.OK).body(Map.of("success", true));
+            roomService.deleteRoom(id);
+            return ResponseEntity.ok(Map.of("success", true));
         } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
         } catch (RuntimeException e) {

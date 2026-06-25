@@ -1,5 +1,6 @@
 package com.choom.back.validator;
 
+import com.choom.back.exception.BadRequestException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,7 +14,7 @@ public class AuthValidator {
             message += "Password is required";
         }
         if(!message.isEmpty()) {
-            throw new RuntimeException(message);
+            throw new BadRequestException(message);
         }
     }
 }
