@@ -118,166 +118,170 @@ export default function PublicDashboard() {
   }, [selectedEventId]);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8">
-      <div className="mb-8 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Programme</h1>
-          <p className="mt-1 text-gray-500">
-            Consultez le planning des sessions par salle
-          </p>
+    <div className="min-h-[calc(100vh-80px)] bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 px-4 py-8">
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-8 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-white">Program</h1>
+            <p className="mt-1 text-blue-200/60">
+              Consult the session schedule by room
+            </p>
+          </div>
+          {events.length > 0 && (
+            <select
+              value={selectedEventId}
+              onChange={(e) =>
+                dispatch({ type: "SET_SELECTED_EVENT", id: e.target.value })
+              }
+              className="w-full rounded-lg border-0 bg-slate-800/50 px-4 py-2 text-sm text-white shadow-lg shadow-blue-900/20 focus:outline-none focus:ring-2 focus:ring-blue-500/50 sm:w-auto"
+            >
+              {events.map((ev) => (
+                <option key={ev.id} value={ev.id}>
+                  {ev.title}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
-        {events.length > 0 && (
-          <select
-            value={selectedEventId}
-            onChange={(e) =>
-              dispatch({ type: "SET_SELECTED_EVENT", id: e.target.value })
-            }
-            className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none sm:w-auto"
-          >
-            {events.map((ev) => (
-              <option key={ev.id} value={ev.id}>
-                {ev.title}
-              </option>
-            ))}
-          </select>
+
+        {error && (
+          <div className="mb-6 rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400">
+            {error}
+          </div>
         )}
-      </div>
 
-      {error && (
-        <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {error}
-        </div>
-      )}
+        {loading && (
+          <div className="flex items-center justify-center py-16">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500/30 border-t-blue-500" />
+          </div>
+        )}
 
-      {loading && (
-        <div className="flex items-center justify-center py-16">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-200 border-t-indigo-600" />
-        </div>
-      )}
+        {!loading && events.length === 0 && !error && (
+          <div className="rounded-lg border border-dashed border-blue-800/30 py-16 text-center">
+            <p className="text-blue-200/60">No events available.</p>
+          </div>
+        )}
 
-      {!loading && events.length === 0 && !error && (
-        <div className="rounded-lg border border-dashed border-gray-300 py-16 text-center">
-          <p className="text-gray-500">Aucun événement disponible.</p>
-        </div>
-      )}
+        {!loading && timeSlots.length === 0 && selectedEventId && !error && (
+          <div className="rounded-lg border border-dashed border-blue-800/30 py-16 text-center">
+            <p className="text-blue-200/60">
+              No sessions scheduled for this event.
+            </p>
+          </div>
+        )}
 
-      {!loading && timeSlots.length === 0 && selectedEventId && !error && (
-        <div className="rounded-lg border border-dashed border-gray-300 py-16 text-center">
-          <p className="text-gray-500">
-            Aucune session programmée pour cet événement.
-          </p>
-        </div>
-      )}
-
-      {!loading && timeSlots.length > 0 && (
-        <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
-          <table className="w-full text-left text-sm">
-            <thead>
-              <tr className="border-b border-gray-200 bg-gray-50">
-                <th className="w-40 px-5 py-4 font-semibold text-gray-600">
-                  Horaire
-                </th>
-                {rooms.map((r) => (
-                  <th
-                    key={r.id}
-                    className="px-5 py-4 font-semibold text-gray-600"
-                  >
-                    {r.name}
+        {!loading && timeSlots.length > 0 && (
+          <div className="overflow-x-auto rounded-xl border border-blue-800/30 bg-slate-800/50 backdrop-blur-sm shadow-xl shadow-blue-900/20">
+            <table className="w-full text-left text-sm">
+              <thead>
+                <tr className="border-b border-blue-800/30 bg-slate-900/50">
+                  <th className="w-40 px-5 py-4 font-semibold text-blue-200/80">
+                    Schedule
                   </th>
-                ))}
-                {rooms.length === 0 && (
-                  <th className="px-5 py-4 font-medium text-gray-400">
-                    Aucune salle
-                  </th>
-                )}
-              </tr>
-            </thead>
-            <tbody>
-              {timeSlots.map((slot) => {
-                const startLabel = formatTime(slot.startTime);
-                const endLabel = formatTime(slot.endTime);
-                return (
-                  <tr
-                    key={`${slot.startTime}|${slot.endTime}`}
-                    className="border-b border-gray-100 last:border-0"
-                  >
-                    <td className="whitespace-nowrap px-5 py-4 font-medium text-gray-700">
-                      {startLabel}
-                      <span className="mx-1 text-gray-400">—</span>
-                      {endLabel}
-                    </td>
-                    {rooms.map((r) => {
-                      const session =
-                        slot.cells[r.id] || slot.cells[r.name];
-                      if (!session) {
+                  {rooms.map((r) => (
+                    <th
+                      key={r.id}
+                      className="px-5 py-4 font-semibold text-blue-200/80"
+                    >
+                      {r.name}
+                    </th>
+                  ))}
+                  {rooms.length === 0 && (
+                    <th className="px-5 py-4 font-medium text-blue-300/40">
+                      No room
+                    </th>
+                  )}
+                </tr>
+              </thead>
+              <tbody>
+                {timeSlots.map((slot) => {
+                  const startLabel = formatTime(slot.startTime);
+                  const endLabel = formatTime(slot.endTime);
+                  return (
+                    <tr
+                      key={`${slot.startTime}|${slot.endTime}`}
+                      className="border-b border-blue-800/20 last:border-0"
+                    >
+                      <td className="whitespace-nowrap px-5 py-4 font-medium text-blue-200/80">
+                        {startLabel}
+                        <span className="mx-1 text-blue-400/40">—</span>
+                        {endLabel}
+                      </td>
+                      {rooms.map((r) => {
+                        const session =
+                          slot.cells[r.id] || slot.cells[r.name];
+                        if (!session) {
+                          return (
+                            <td key={r.id} className="px-5 py-4">
+                              <span className="text-blue-400/30">—</span>
+                            </td>
+                          );
+                        }
+                        const sid = session.sessionId || session.id;
+                        const cellKey = `${session.startTime}|${session.endTime}|${r.id}`;
+                        const speakers = speakersBySession[cellKey] || [];
+                        const live = isLive(session.startTime, session.endTime);
+
                         return (
                           <td key={r.id} className="px-5 py-4">
-                            <span className="text-gray-300">—</span>
-                          </td>
-                        );
-                      }
-                      const sid = session.sessionId || session.id;
-                      const cellKey = `${session.startTime}|${session.endTime}|${r.id}`;
-                      const speakers = speakersBySession[cellKey] || [];
-                      const live = isLive(session.startTime, session.endTime);
-
-                      return (
-                        <td key={r.id} className="px-5 py-4">
-                          <Link
-                            href={`/sessions/${sid}`}
-                            className={`block rounded-lg border p-4 transition-shadow hover:shadow-md ${
-                              live
-                                ? "border-red-200 bg-red-50"
-                                : "border-gray-200 hover:border-indigo-200"
-                            }`}
-                          >
-                            <div className="flex items-start gap-2">
-                              <div className="min-w-0 flex-1">
-                                <h3 className="font-medium text-indigo-700">
-                                  {session.title}
-                                </h3>
-                                {session.description && (
-                                  <p className="mt-1 text-xs text-gray-500 line-clamp-2">
-                                    {session.description}
-                                  </p>
-                                )}
-                                {speakers.length > 0 && (
-                                  <div className="mt-2 flex flex-wrap gap-1">
-                                    {speakers.map((sp) => (
-                                      <span
-                                        key={sp.id}
-                                        className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600"
-                                      >
-                                        {sp.firstName} {sp.lastName}
-                                      </span>
-                                    ))}
-                                  </div>
+                            <Link
+                              href={`/sessions/${sid}`}
+                              className={`block rounded-lg border p-4 transition-all duration-200 hover:shadow-lg ${
+                                live
+                                  ? "border-red-500/30 bg-red-500/10 hover:shadow-red-500/10"
+                                  : "border-blue-800/30 bg-slate-900/30 hover:border-blue-500/50 hover:shadow-blue-500/10"
+                              }`}
+                            >
+                              <div className="flex items-start gap-2">
+                                <div className="min-w-0 flex-1">
+                                  <h3 className={`font-medium ${
+                                    live ? "text-red-400" : "text-blue-200/90"
+                                  }`}>
+                                    {session.title}
+                                  </h3>
+                                  {session.description && (
+                                    <p className="mt-1 text-xs text-blue-300/50 line-clamp-2">
+                                      {session.description}
+                                    </p>
+                                  )}
+                                  {speakers.length > 0 && (
+                                    <div className="mt-2 flex flex-wrap gap-1">
+                                      {speakers.map((sp) => (
+                                        <span
+                                          key={sp.id}
+                                          className="rounded-full bg-slate-800/50 px-2 py-0.5 text-xs text-blue-300/60"
+                                        >
+                                          {sp.firstName} {sp.lastName}
+                                        </span>
+                                      ))}
+                                    </div>
+                                  )}
+                                </div>
+                                {live && (
+                                  <span
+                                    className="mt-1 inline-block h-2 w-2 shrink-0 rounded-full bg-red-500 animate-pulse shadow-lg shadow-red-500/50"
+                                    title="Live"
+                                  />
                                 )}
                               </div>
-                              {live && (
-                                <span
-                                  className="mt-1 inline-block h-2 w-2 shrink-0 rounded-full bg-red-500 animate-pulse"
-                                  title="En direct"
-                                />
-                              )}
-                            </div>
-                          </Link>
-                        </td>
-                      );
-                    })}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
+                            </Link>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
 
-      {!loading && timeSlots.length > 0 && (
-        <p className="mt-4 text-center text-xs text-gray-400">
-          Cliquez sur une session pour voir les détails et poser vos questions
-        </p>
-      )}
+        {!loading && timeSlots.length > 0 && (
+          <p className="mt-4 text-center text-xs text-blue-300/40">
+            Click on a session to see details and ask your questions
+          </p>
+        )}
+      </div>
     </div>
   );
 }

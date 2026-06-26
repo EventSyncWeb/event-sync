@@ -19,7 +19,7 @@ function QuestionsView({ promise, onUpvote }) {
       </div>
       {questions.length === 0 ? (
         <p className="text-center text-slate-400 py-8">
-          Soyez le premier a poser une question !
+          Be the first to ask a question !
         </p>
       ) : (
         <QuestionList questions={questions} onUpvote={onUpvote} />
@@ -61,7 +61,7 @@ export default function QuestionSection() {
         fallback={
           <div className="flex flex-col items-center gap-3 py-12 text-slate-400">
             <span className="w-7 h-7 border-2 border-slate-200 border-t-indigo-500 rounded-full animate-spin" />
-            <p className="text-sm">Chargement des questions...</p>
+            <p className="text-sm">Loading questions...</p>
           </div>
         }
       >

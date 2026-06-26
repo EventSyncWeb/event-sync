@@ -2,7 +2,7 @@ import EventCard from "./EventCard";
 
 export default function EventList({ events }) {
   if (events.length === 0) {
-    return <p className="text-gray-500">Aucun événement à venir.</p>;
+    return <p className="text-gray-500">No upcoming events.</p>;
   }
 
   return (

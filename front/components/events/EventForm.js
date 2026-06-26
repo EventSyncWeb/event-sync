@@ -59,7 +59,7 @@ export default function EventForm({ initialValues, onSubmit, submitLabel }) {
       </div>
       <div className="flex gap-4">
         <div className="flex-1">
-          <label className="mb-1 block text-sm font-medium">Début</label>
+          <label className="mb-1 block text-sm font-medium">Beginning</label>
           <input
             type="date"
             name="startDate"
@@ -70,7 +70,7 @@ export default function EventForm({ initialValues, onSubmit, submitLabel }) {
           />
         </div>
         <div className="flex-1">
-          <label className="mb-1 block text-sm font-medium">Fin</label>
+          <label className="mb-1 block text-sm font-medium">End</label>
           <input
             type="date"
             name="endDate"
@@ -82,7 +82,7 @@ export default function EventForm({ initialValues, onSubmit, submitLabel }) {
         </div>
       </div>
       <div>
-        <label className="mb-1 block text-sm font-medium">Lieu</label>
+        <label className="mb-1 block text-sm font-medium">Location</label>
         <input
           name="location"
           required
@@ -97,7 +97,7 @@ export default function EventForm({ initialValues, onSubmit, submitLabel }) {
           disabled={loading}
           className="rounded bg-indigo-600 px-4 py-2 text-sm text-white hover:bg-indigo-700 disabled:opacity-50"
         >
-          {loading ? "Enregistrement..." : submitLabel || "Enregistrer"}
+          {loading ? "Saving..." : submitLabel || "save"}
         </button>
       </div>
     </form>
