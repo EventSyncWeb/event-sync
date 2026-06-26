@@ -30,6 +30,10 @@ public class QuestionService {
         return optionalQuestion.get();
     }
 
+   public List<Question> getQuestionsBySessionId(){
+        return questionRepository.findQuestionsBySessionId();
+   }
+
     public Question createQuestion (Question question){
         questionValidator.validateCreate(question);
         return questionRepository.createQuestion(question);

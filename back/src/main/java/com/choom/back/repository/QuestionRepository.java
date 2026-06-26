@@ -34,6 +34,22 @@ public class QuestionRepository {
         }
     };
 
+    public List<Question> findQuestionsBySessionId(){
+        List<Question> questions = new ArrayList<>();
+        String findBySessionId= "select id, content, author_name, creation_date, upvote_count, session_id from question where session_id =?";
+
+        try(Connection connection = dbConfig.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(findBySessionId)){
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while(resultSet.next()){
+                questions.add(mapQuestion(resultSet));
+            }
+            return  questions;
+        }catch (SQLException e){
+            throw  new RuntimeException(e);
+        }
+    }
+
     public List<Question> findAllQuestions(){
             List<Question> questions = new ArrayList<>();
             String findAllQuery = "select id, content, author_name, creation_date, upvote_count, session_id from question";

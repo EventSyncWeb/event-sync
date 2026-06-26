@@ -28,6 +28,11 @@ public class QuestionController {
             return ResponseEntity.status(HttpStatus.OK).body(question);
     }
 
+    @GetMapping("/question/{sessionId}")
+    public ResponseEntity<List<Question>> getQuestionsBySessionId(){
+        return ResponseEntity.status(HttpStatus.OK).body(questionServices.getQuestionsBySessionId());
+    }
+
     @PostMapping("/question")
     public ResponseEntity<Question> createQuestion(@RequestBody Question question){
         Question created = questionServices.createQuestion(question);
