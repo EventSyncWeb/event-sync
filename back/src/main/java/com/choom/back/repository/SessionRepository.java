@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -53,8 +56,8 @@ public class SessionRepository {
                 session.setId((UUID) resultSet.getObject("id"));
                 session.setTitle(resultSet.getString("title"));
                 session.setDescription(resultSet.getString("description"));
-                session.setStartTime(resultSet.getTimestamp("start_time").toLocalDateTime());
-                session.setEndTime(resultSet.getTimestamp("end_time").toLocalDateTime());
+                session.setStartTime(resultSet.getTime("start_time").toLocalTime());
+                session.setEndTime(resultSet.getTime("end_time").toLocalTime());
                 session.setRoom((UUID) resultSet.getObject("room_id"));
                 session.setRoomName(resultSet.getString("room_name"));
                 session.setCapacity((Integer) resultSet.getObject("capacity"));
@@ -86,8 +89,8 @@ public class SessionRepository {
                 session.setId((UUID) resultSet.getObject("id"));
                 session.setTitle(resultSet.getString("title"));
                 session.setDescription(resultSet.getString("description"));
-                session.setStartTime(resultSet.getTimestamp("start_time").toLocalDateTime());
-                session.setEndTime(resultSet.getTimestamp("end_time").toLocalDateTime());
+                session.setStartTime(resultSet.getTime("start_time").toLocalTime());
+                session.setEndTime(resultSet.getTime("end_time").toLocalTime());
                 session.setRoom((UUID) resultSet.getObject("room_id"));
                 session.setRoomName(resultSet.getString("room_name"));
                 session.setCapacity((Integer) resultSet.getObject("capacity"));
@@ -121,8 +124,8 @@ public class SessionRepository {
                 session.setId((UUID) resultSet.getObject("id"));
                 session.setTitle(resultSet.getString("title"));
                 session.setDescription(resultSet.getString("description"));
-                session.setStartTime(resultSet.getTimestamp("start_time").toLocalDateTime());
-                session.setEndTime(resultSet.getTimestamp("end_time").toLocalDateTime());
+                session.setStartTime(resultSet.getTime("start_time").toLocalTime());
+                session.setEndTime(resultSet.getTime("end_time").toLocalTime());
                 session.setRoom((UUID) resultSet.getObject("room_id"));
                 session.setRoomName(resultSet.getString("room_name"));
                 session.setCapacity((Integer) resultSet.getObject("capacity"));
@@ -152,7 +155,7 @@ public class SessionRepository {
             preparedStatement.setObject(1, session.getId());
             preparedStatement.setString(2, session.getTitle());
             preparedStatement.setString(3, session.getDescription());
-            preparedStatement.setObject(4, session.getStartTime());
+            preparedStatement.setObject(4,session.getStartTime());
             preparedStatement.setObject(5, session.getEndTime());
             preparedStatement.setObject(6, session.getRoom());
             preparedStatement.setObject(7, session.getCapacity());
@@ -256,6 +259,43 @@ public class SessionRepository {
         return false;
     }
 
+    public boolean existsConflictingSession(UUID roomId, LocalDateTime startTime, LocalDateTime endTime, UUID excludeId) {
+        String query;
+        if (excludeId != null) {
+            query = """
+                SELECT COUNT(*) FROM session
+                WHERE room_id = ?
+                  AND start_time < ?
+                  AND end_time > ?
+                  AND id != ?
+            """;
+        } else {
+            query = """
+                SELECT COUNT(*) FROM session
+                WHERE room_id = ?
+                  AND start_time < ?
+                  AND end_time > ?
+            """;
+        }
+
+        try (Connection connection = dbConfig.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setObject(1, roomId);
+            stmt.setObject(2, endTime);
+            stmt.setObject(3, startTime);
+            if (excludeId != null) {
+                stmt.setObject(4, excludeId);
+            }
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
+
     private List<Speaker> findSpeakersForSession(UUID sessionId) {
         List<Speaker> speakers = new ArrayList<>();
         String query = """
@@ -315,6 +355,7 @@ public class SessionRepository {
             throw new RuntimeException(e);
         }
     }
+
 
 
 }

@@ -8,6 +8,8 @@ import com.choom.back.validator.SessionValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,7 +28,19 @@ public class SessionService {
         if (session == null) {
             throw new NotFoundException("Session with id " + id + " not found");
         }
+        session.setOnLive(isOnLive(session));
         return session;
+    }
+
+    public boolean isOnLive(Session session) {
+        if (session.getDate() == null || session.getStartTime() == null || session.getEndTime() == null) {
+            return false;
+        }
+        LocalDate now = LocalDate.now();
+        LocalTime nowTime = LocalTime.now();
+        return session.getDate().equals(now)
+                && !nowTime.isBefore(session.getStartTime())
+                && !nowTime.isAfter(session.getEndTime());
     }
 
     public List<Session> getSessionByEventId(UUID eventId){
