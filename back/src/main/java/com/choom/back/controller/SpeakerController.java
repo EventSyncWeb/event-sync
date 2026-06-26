@@ -19,9 +19,9 @@ public class SpeakerController {
     private final SpeakerService speakerService;
 
     @GetMapping
-    public ResponseEntity<?> getAllSpeakers() {
+    public ResponseEntity<?> getAllSpeakers(@RequestParam(required = false) String q) {
         try {
-            List<Speaker> speakers = speakerService.getAllSpeakers();
+            List<Speaker> speakers = speakerService.getAllSpeakers(q);
             return ResponseEntity.ok(speakers);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));

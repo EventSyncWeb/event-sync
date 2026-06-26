@@ -24,9 +24,9 @@ public class EventController {
     private final EventValidator eventValidator;
 
     @GetMapping
-    public ResponseEntity<?> getAllEvents() {
+    public ResponseEntity<?> getAllEvents(@RequestParam(required = false) String q) {
         try {
-            List<Event> events = eventService.getAllEvents();
+            List<Event> events = eventService.getAllEvents(q);
             return ResponseEntity.ok(events);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));

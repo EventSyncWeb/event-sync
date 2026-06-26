@@ -13,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Service
 public class QuestionService {
-    QuestionRepository questionRepository;
+    private final QuestionRepository questionRepository;
 
     public List<Question> getAllQuestions(){
         return questionRepository.findAllQuestions();

@@ -4,6 +4,9 @@ export default function SpeakerCard({ speaker }) {
       <p className="font-medium">
         {speaker.firstName} {speaker.lastName}
       </p>
+      {speaker.sessionTitle && (
+        <p className="text-xs text-indigo-600">Session : {speaker.sessionTitle}</p>
+      )}
       {speaker.company && (
         <p className="text-sm text-gray-500">{speaker.company}</p>
       )}

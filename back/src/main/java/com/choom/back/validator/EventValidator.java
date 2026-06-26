@@ -20,19 +20,24 @@ public class EventValidator {
         if(eventRequest.getStartDate() == null) {
             message += "Start date field cannot empty ";
         }
-        if(!eventRequest.getEndDate().isAfter(eventRequest.getStartDate())) {
-            message += "Start date should be after end date ";
-        }
         if(eventRequest.getEndDate() == null) {
             message += "End date field cannot empty ";
         }
-        String startDateString = eventRequest.getStartDate().toString();
-        String endDateString = eventRequest.getEndDate().toString();
-        if(!startDateString.matches("\\d{4}-\\d{2}-\\d{2}")) {
-            message += "Start date should be in the format yyyy-mm-dd ";
+        if(eventRequest.getStartDate() != null && eventRequest.getEndDate() != null
+                && !eventRequest.getEndDate().isAfter(eventRequest.getStartDate())) {
+            message += "Start date should be before end date ";
         }
-        if(!endDateString.matches("\\d{4}-\\d{2}-\\d{2}")) {
-            message += "End date should be in the format yyyy-mm-dd ";
+        if(eventRequest.getStartDate() != null) {
+            String startDateString = eventRequest.getStartDate().toString();
+            if(!startDateString.matches("\\d{4}-\\d{2}-\\d{2}")) {
+                message += "Start date should be in the format yyyy-mm-dd ";
+            }
+        }
+        if(eventRequest.getEndDate() != null) {
+            String endDateString = eventRequest.getEndDate().toString();
+            if(!endDateString.matches("\\d{4}-\\d{2}-\\d{2}")) {
+                message += "End date should be in the format yyyy-mm-dd ";
+            }
         }
         if(!message.isBlank()) {
             throw new BadRequestException(message);
