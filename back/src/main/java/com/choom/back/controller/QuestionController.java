@@ -28,9 +28,10 @@ public class QuestionController {
             return ResponseEntity.status(HttpStatus.OK).body(question);
     }
 
-    @GetMapping("/question/{sessionId}")
-    public ResponseEntity<List<Question>> getQuestionsBySessionId(){
-        return ResponseEntity.status(HttpStatus.OK).body(questionServices.getQuestionsBySessionId());
+    @GetMapping("/question/session/{sessionId}")
+    public ResponseEntity<List<Question>> getQuestionsBySessionId(@PathVariable UUID sessionId){
+        List<Question> questions = questionServices.getQuestionsBySessionId(sessionId);
+        return ResponseEntity.ok(questions);
     }
 
     @PostMapping("/question")
