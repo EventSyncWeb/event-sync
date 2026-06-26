@@ -2,7 +2,7 @@ import SessionCard from "./SessionCard";
 
 export default function SessionList({ sessions, speakersBySession = {} }) {
   if (sessions.length === 0) {
-    return <p className="text-gray-500">Aucune session programmée.</p>;
+    return <p className="text-gray-500">No scheduled sessions.</p>;
   }
 
   return (
