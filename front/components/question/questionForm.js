@@ -38,13 +38,13 @@ export default function QuestionForm({ onQuestionAdded }) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-2">
       <div>
-        <h2 className="text-2xl font-bold text-slate-900">Questions</h2>
+        <h2 className="text-2xl font-bold text-white text-slate-900">Questions</h2>
       </div>
       {/* Author */}
       <div className="flex flex-col gap-1">
         <label
           htmlFor="author"
-          className="text-sm font-semibold text-slate-700"
+          className="text-sm font-semibold text-slate-700 text-white/50"
         >
           Name <span className="text-slate-400 font-normal">(optional)</span>
         </label>
@@ -56,7 +56,7 @@ export default function QuestionForm({ onQuestionAdded }) {
           placeholder="Anonymous"
           maxLength={60}
           disabled={loading}
-          className="border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm text-slate-800 bg-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed transition"
+          className="w-full rounded-lg border-0 bg-slate-900/50 px-4 py-3 text-sm text-white placeholder:text-blue-300/30 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-200"
         />
       </div>
 
@@ -64,7 +64,7 @@ export default function QuestionForm({ onQuestionAdded }) {
       <div className="flex flex-col gap-1">
         <label
           htmlFor="content"
-          className="text-sm font-semibold text-slate-700"
+          className="text-sm font-semibold text-slate-700 text-white/50"
         >
           Question <span className="text-red-500">*</span>
         </label>
@@ -77,7 +77,7 @@ export default function QuestionForm({ onQuestionAdded }) {
           maxLength={500}
           required
           disabled={loading}
-          className="border border-slate-200 rounded-lg px-2.5 py-2.5 text-sm text-slate-800 bg-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed transition resize-y"
+          className="w-full rounded-lg border-0 bg-slate-900/50 px-4 py-3 text-sm text-white placeholder:text-blue-300/30 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-200"
         />
         <span className="text-xs text-slate-400 text-right">
           {content.length}/500
