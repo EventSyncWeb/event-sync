@@ -15,7 +15,7 @@ export default function QuestionList({ questions, onUpvote }) {
       setUpvotedIds((prev) => new Set([...prev, id]));
       onUpvote?.(id);
     } catch (err) {
-      console.error("Upvote échoué :", err.message);
+      console.error("Upvote failed :", err.message);
     } finally {
       setLoadingId(null);
     }
@@ -25,8 +25,8 @@ export default function QuestionList({ questions, onUpvote }) {
     return (
       <div className="flex flex-col items-center justify-center gap-2 py-12 text-slate-400 text-center">
         <span className="text-4xl">💬</span>
-        <p className="text-sm font-medium">Aucune question pour le moment.</p>
-        <p className="text-xs">Soyez le premier à poser une question !</p>
+        <p className="text-sm font-medium">No questions yet.</p>
+        <p className="text-xs">Be the first to ask a question !</p>
       </div>
     );
   }
@@ -45,7 +45,7 @@ export default function QuestionList({ questions, onUpvote }) {
           {/* Meta */}
           <div className="flex items-center gap-2">
             <span className="text-xs font-semibold text-indigo-600">
-              {q.author || "Anonyme"}
+              {q.author || "Anonymous"}
             </span>
             {q.createdAt && (
               <span className="text-xs text-slate-400">

@@ -21,7 +21,7 @@ export default function QuestionForm({ onQuestionAdded }) {
     try {
       const newQuestion = await createQuestion({
         content: content.trim(),
-        author: author.trim() || "Anonyme",
+        author: author.trim() || "Anonymous",
       });
       setContent("");
       setAuthor("");
@@ -46,14 +46,14 @@ export default function QuestionForm({ onQuestionAdded }) {
           htmlFor="author"
           className="text-sm font-semibold text-slate-700"
         >
-          Name <span className="text-slate-400 font-normal">(optionnal)</span>
+          Name <span className="text-slate-400 font-normal">(optional)</span>
         </label>
         <input
           id="author"
           type="text"
           value={author}
           onChange={(e) => setAuthor(e.target.value)}
-          placeholder="Anonyme"
+          placeholder="Anonymous"
           maxLength={60}
           disabled={loading}
           className="border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm text-slate-800 bg-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed transition"
