@@ -62,7 +62,7 @@ export default function EventsPage() {
               defaultValue={query}
               onKeyDown={handleKeyDown}
               placeholder="Search an event..."
-              className="w-64 rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none"
+              className="w-64 rounded-lg border-0 bg-slate-700/50 px-4 py-2 text-sm text-white placeholder:text-blue-300/30 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
             />
             <button
               onClick={handleSearch}
