@@ -27,7 +27,10 @@ public class EventController {
     public ResponseEntity<?> getAllEvents(@RequestParam(required = false) String q) {
         try {
             List<Event> events = eventService.getAllEvents(q);
-            return ResponseEntity.ok(events);
+            return ResponseEntity.ok()
+                    .header("X-Total-Count", String.valueOf(events.size()))
+                    .header("Access-Control-Allow-Origin", "X-Total-Count")
+                    .body(events);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
         }
