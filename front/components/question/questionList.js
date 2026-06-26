@@ -23,10 +23,10 @@ export default function QuestionList({ questions, onUpvote }) {
 
   if (!questions || questions.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center gap-2 py-12 text-slate-400 text-center">
+      <div className="flex flex-col items-center justify-center gap-2 py-12 text-blue-300/40 text-center">
         <span className="text-4xl">💬</span>
         <p className="text-sm font-medium">No questions yet.</p>
-        <p className="text-xs">Be the first to ask a question !</p>
+        <p className="text-xs">Be the first to ask a question!</p>
       </div>
     );
   }
@@ -40,15 +40,15 @@ export default function QuestionList({ questions, onUpvote }) {
       {sorted.map((q) => (
         <li
           key={q.id}
-          className="bg-white border border-slate-200 rounded-xl px-5 py-4 flex flex-col gap-2 shadow-sm hover:shadow-md transition-shadow"
+          className="rounded-xl border border-blue-800/30 bg-slate-800/50 backdrop-blur-sm px-5 py-4 flex flex-col gap-2 shadow-lg shadow-blue-900/20 transition-all duration-200 hover:shadow-xl hover:shadow-blue-900/30 hover:border-blue-500/50"
         >
           {/* Meta */}
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-indigo-600">
+            <span className="text-xs font-semibold text-blue-400">
               {q.author || "Anonymous"}
             </span>
             {q.createdAt && (
-              <span className="text-xs text-slate-400">
+              <span className="text-xs text-blue-300/40">
                 ·{" "}
                 {new Date(q.createdAt).toLocaleDateString("fr-FR", {
                   day: "numeric",
@@ -61,20 +61,20 @@ export default function QuestionList({ questions, onUpvote }) {
           </div>
 
           {/* Content */}
-          <p className="text-sm text-slate-700 leading-relaxed">{q.content}</p>
+          <p className="text-sm text-blue-200/80 leading-relaxed">{q.content}</p>
 
           {/* Upvote */}
           <button
             onClick={() => handleUpvote(q.id)}
             disabled={upvotedIds.has(q.id) || loadingId === q.id}
             aria-label="Voter pour cette question"
-            className={`self-start flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border transition
+            className={`self-start flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border transition-all duration-200
               ${
                 upvotedIds.has(q.id)
-                  ? "border-indigo-400 text-indigo-600 bg-indigo-50"
-                  : "border-slate-200 text-slate-500 hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50"
+                  ? "border-blue-400 text-blue-400 bg-blue-500/20"
+                  : "border-blue-800/30 text-blue-300/50 hover:border-blue-400 hover:text-blue-400 hover:bg-blue-500/10"
               }
-              disabled:cursor-not-allowed`}
+              disabled:cursor-not-allowed disabled:opacity-50`}
           >
             <span className="text-[10px]">▲</span>
             <span>{(q.upvotes ?? 0) + (upvotedIds.has(q.id) ? 1 : 0)}</span>
