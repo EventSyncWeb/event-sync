@@ -22,8 +22,10 @@ export function formatDateTime(dateStr) {
 
 export function isLive(startTime, endTime) {
   const now = new Date();
-  const start = new Date(startTime);
-  const end = new Date(endTime);
+ const today = now.toISOString().split("T")[0]; 
+  const start = new Date(`${today}T${startTime}`);
+  const end = new Date(`${today}T${endTime}`);
+ 
   return now >= start && now <= end;
 }
 
