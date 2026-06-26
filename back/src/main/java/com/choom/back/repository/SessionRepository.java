@@ -7,8 +7,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -259,7 +257,7 @@ public class SessionRepository {
         return false;
     }
 
-    public boolean existsConflictingSession(UUID roomId, LocalDateTime startTime, LocalDateTime endTime, UUID excludeId) {
+    public boolean existsConflictingSession(UUID roomId, LocalTime startTime, LocalTime endTime, UUID excludeId) {
         String query;
         if (excludeId != null) {
             query = """
