@@ -15,18 +15,18 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "EventSync — Gestion d'événements en temps réel",
+  title: "EventSync — Real-time event management",
   description:
-    "Plateforme interactive de gestion d'événements et d'engagement des participants",
+    "Interactive event management and attendee engagement platform",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html
-      lang="fr"
+      lang="eng"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-gray-50">
+      <body className="flex min-h-full flex-col bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900">
         <AuthProvider>
           <Header />
           <main className="flex-1">{children}</main>
