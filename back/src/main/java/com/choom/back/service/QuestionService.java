@@ -3,7 +3,6 @@ package com.choom.back.service;
 import com.choom.back.entity.Question;
 import com.choom.back.exception.NotFoundException;
 import com.choom.back.repository.QuestionRepository;
-import com.choom.back.validator.QuestionValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +14,6 @@ import java.util.UUID;
 @Service
 public class QuestionService {
     private final QuestionRepository questionRepository;
-    private final QuestionValidator questionValidator;
 
     public List<Question> getAllQuestions(){
         return questionRepository.findAllQuestions();
@@ -31,7 +29,7 @@ public class QuestionService {
     }
 
     public Question createQuestion (Question question){
-        questionValidator.validateCreate(question);
+
         return questionRepository.createQuestion(question);
     }
 

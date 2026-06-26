@@ -16,16 +16,23 @@ import java.util.UUID;
 @Repository
 public class QuestionRepository {
     private final DBConfig dbConfig;
+    private final SessionRepository sessionRepository;
 
     public Optional<Question> findQuestionById(UUID id){
-        String findQuestionQuery = "select id, content, author_name, creation_date, upvote_count, session_id from question where id=?";
+        String findQuestionQuery = "select id, content, author_name, creation_date,upvote_count from question where id=?";
 
         try(Connection connection = dbConfig.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(findQuestionQuery)) {
             preparedStatement.setObject(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if(resultSet.next()){
-                Question question = mapQuestion(resultSet);
+                Question question = new Question();
+                question.setId(resultSet.getObject( "id",UUID.class));
+                question.setContent(resultSet.getString("content"));
+                question.setAuthorName(resultSet.getString("author_name"));
+                question.setCreationDate(resultSet.getTimestamp("creation_date"));
+                question.setUpvoteCount(resultSet.getInt(("upvote_count")));
+
                 return Optional.of(question);
             }
             return Optional.empty();
@@ -36,13 +43,19 @@ public class QuestionRepository {
 
     public List<Question> findAllQuestions(){
             List<Question> questions = new ArrayList<>();
-            String findAllQuery = "select id, content, author_name, creation_date, upvote_count, session_id from question";
+            String findAllQuery = "select id, content, author_name, creation_date,upvote_count from question";
 
             try(Connection connection = dbConfig.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(findAllQuery)){
                 ResultSet resultSet= preparedStatement.executeQuery();
                 while(resultSet.next()){
-                    questions.add(mapQuestion(resultSet));
+                    Question question = new Question();
+                    question.setId(resultSet.getObject( "id",UUID.class));
+                    question.setContent(resultSet.getString("content"));
+                    question.setAuthorName(resultSet.getString("author_name"));
+                    question.setCreationDate(resultSet.getTimestamp("creation_date"));
+                    question.setUpvoteCount(resultSet.getInt(("upvote_count")));
+                    questions.add(question);
                 }
                 return questions;
             } catch (SQLException e) {
@@ -53,11 +66,12 @@ public class QuestionRepository {
 
     public Question createQuestion(Question question){
 
-        String saveQuestionQuery = "Insert into question (id, content, author_name, creation_date, upvote_count, session_id) " +
-                "values (?, ? , ?, ?, ?, ?) ";
+        String saveQuestionQuery = "Insert into question (id, content,author_name, creation_date, upvote_count) " +
+                "values (?, ? , ?, ?, ?) ";
 
         try(Connection connection = dbConfig.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(saveQuestionQuery)){
+            sessionRepository.validateActiveSession(connection);
 
             if(question.getId() == null){
                 question.setId(UUID.randomUUID());
@@ -76,25 +90,12 @@ public class QuestionRepository {
                     ? question.getUpvoteCount()
                     : 0);
 
-            preparedStatement.setObject(6, question.getSessionId());
-
             preparedStatement.executeUpdate();
             return question;
 
         } catch (SQLException e) {
             throw new RuntimeException("error saving question",e);
         }
-    }
-
-    private Question mapQuestion(ResultSet resultSet) throws SQLException {
-        Question question = new Question();
-        question.setId(resultSet.getObject("id", UUID.class));
-        question.setContent(resultSet.getString("content"));
-        question.setAuthorName(resultSet.getString("author_name"));
-        question.setCreationDate(resultSet.getTimestamp("creation_date"));
-        question.setUpvoteCount(resultSet.getInt("upvote_count"));
-        question.setSessionId((UUID) resultSet.getObject("session_id"));
-        return question;
     }
 
     public void upvoteCount(UUID id){
