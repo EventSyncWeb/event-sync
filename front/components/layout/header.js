@@ -35,9 +35,10 @@ export default function Header() {
           </Link>
           <Link
             href="/dashboard"
-            className="text-sm text-gray-600 hover:text-indigo-600"
+            className="group relative px-4 py-2 text-sm font-medium text-blue-200/70 transition-all duration-200 hover:text-white"
           >
-            Programme
+            Program
+            <span className="absolute inset-x-4 bottom-0 h-0.5 bg-blue-500 scale-x-0 transition-transform duration-200 group-hover:scale-x-100"></span>
           </Link>
           <Link
             href="/speakers"
