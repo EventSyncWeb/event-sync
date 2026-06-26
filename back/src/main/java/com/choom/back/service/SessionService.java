@@ -20,7 +20,9 @@ public class SessionService {
     private final SessionValidator sessionValidator;
 
     public List<Session> getAllSession(){
-        return sessionRepository.findAllSession();
+        List<Session> sessions = sessionRepository.findAllSession();
+        sessions.forEach(s -> s.setOnLive(isOnLive(s)));
+        return sessions;
     }
 
     public Session getSessionById(UUID id){
@@ -48,6 +50,7 @@ public class SessionService {
         if(sessions.isEmpty()){
             throw new NotFoundException("Session with id " + eventId + " not found");
         }
+        sessions.forEach(s -> s.setOnLive(isOnLive(s)));
         return sessions;
     }
 
