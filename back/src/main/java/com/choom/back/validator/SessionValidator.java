@@ -8,8 +8,6 @@ import com.choom.back.repository.SessionRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.UUID;
 
 @Component
@@ -60,12 +58,10 @@ public class SessionValidator {
             }
         }
 
-        if (session.getEventId() != null && session.getStartTime() != null && session.getEndTime() != null) {
+        if (session.getEventId() != null && session.getDate() != null) {
             Event event = eventRepository.findEventById(session.getEventId());
             if (event != null) {
-                LocalDate sessionStartDate = LocalDate.from(session.getStartTime());
-                LocalDate sessionEndDate = LocalDate.from(session.getEndTime());
-                if (sessionStartDate.isBefore(event.getStartDate()) || sessionEndDate.isAfter(event.getEndDate())) {
+                if (session.getDate().isBefore(event.getStartDate()) || session.getDate().isAfter(event.getEndDate())) {
                     message += "Session time must be within the event date range";
                 }
             }
@@ -132,12 +128,10 @@ public class SessionValidator {
             }
         }
 
-        if (session.getEventId() != null && session.getStartTime() != null && session.getEndTime() != null) {
+        if (session.getEventId() != null && session.getDate() != null) {
             Event event = eventRepository.findEventById(session.getEventId());
             if (event != null) {
-                LocalDate sessionStartDate = LocalDate.from(session.getStartTime());
-                LocalDate sessionEndDate = LocalDate.from(session.getEndTime());
-                if (sessionStartDate.isBefore(event.getStartDate()) || sessionEndDate.isAfter(event.getEndDate())) {
+                if (session.getDate().isBefore(event.getStartDate()) || session.getDate().isAfter(event.getEndDate())) {
                     message += "Session time must be within the event date range";
                 }
             }
