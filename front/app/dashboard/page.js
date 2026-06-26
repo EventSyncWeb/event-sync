@@ -122,9 +122,9 @@ export default function PublicDashboard() {
       <div className="mx-auto max-w-7xl">
         <div className="mb-8 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-white">Programme</h1>
+            <h1 className="text-3xl font-bold text-white">Program</h1>
             <p className="mt-1 text-blue-200/60">
-              Consultez le planning des sessions par salle
+              Consult the session schedule by room
             </p>
           </div>
           {events.length > 0 && (
@@ -158,14 +158,14 @@ export default function PublicDashboard() {
 
         {!loading && events.length === 0 && !error && (
           <div className="rounded-lg border border-dashed border-blue-800/30 py-16 text-center">
-            <p className="text-blue-200/60">Aucun événement disponible.</p>
+            <p className="text-blue-200/60">No events available.</p>
           </div>
         )}
 
         {!loading && timeSlots.length === 0 && selectedEventId && !error && (
           <div className="rounded-lg border border-dashed border-blue-800/30 py-16 text-center">
             <p className="text-blue-200/60">
-              Aucune session programmée pour cet événement.
+              No sessions scheduled for this event.
             </p>
           </div>
         )}
@@ -176,7 +176,7 @@ export default function PublicDashboard() {
               <thead>
                 <tr className="border-b border-blue-800/30 bg-slate-900/50">
                   <th className="w-40 px-5 py-4 font-semibold text-blue-200/80">
-                    Horaire
+                    Schedule
                   </th>
                   {rooms.map((r) => (
                     <th
@@ -188,7 +188,7 @@ export default function PublicDashboard() {
                   ))}
                   {rooms.length === 0 && (
                     <th className="px-5 py-4 font-medium text-blue-300/40">
-                      Aucune salle
+                      No room
                     </th>
                   )}
                 </tr>
@@ -260,7 +260,7 @@ export default function PublicDashboard() {
                                 {live && (
                                   <span
                                     className="mt-1 inline-block h-2 w-2 shrink-0 rounded-full bg-red-500 animate-pulse shadow-lg shadow-red-500/50"
-                                    title="En direct"
+                                    title="Live"
                                   />
                                 )}
                               </div>
@@ -278,7 +278,7 @@ export default function PublicDashboard() {
 
         {!loading && timeSlots.length > 0 && (
           <p className="mt-4 text-center text-xs text-blue-300/40">
-            Cliquez sur une session pour voir les détails et poser vos questions
+            Click on a session to see details and ask your questions
           </p>
         )}
       </div>
