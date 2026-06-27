@@ -8,7 +8,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class BackApplication {
 
     public static void main(String[] args) {
-        Dotenv.configure().systemProperties().load();
         SpringApplication.run(BackApplication.class, args);
     }
 
