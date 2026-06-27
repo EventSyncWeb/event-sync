@@ -20,12 +20,24 @@ export default function NewSpeakerPage({ params: paramsPromise }) {
     );
   }
 
-  if (!params) return <p className="text-gray-500">Chargement...</p>;
+  if (!params) {
+    return (
+      <div className="min-h-[calc(100vh-80px)] bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 px-4 py-8">
+        <div className="mx-auto max-w-lg">
+          <div className="flex items-center justify-center py-16">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500/30 border-t-blue-500" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="mx-auto max-w-lg">
-      <h1 className="mb-6 text-2xl font-bold">Ajouter un intervenant</h1>
-      <SpeakerForm onSubmit={handleSubmit} submitLabel="Ajouter" />
+    <div className="min-h-[calc(100vh-80px)] bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 px-4 py-8">
+      <div className="mx-auto max-w-lg">
+        <h1 className="mb-6 text-2xl font-bold text-white">Add a speaker</h1>
+        <SpeakerForm onSubmit={handleSubmit} submitLabel="Ajouter" />
+      </div>
     </div>
   );
 }
