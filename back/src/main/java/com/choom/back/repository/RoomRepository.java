@@ -19,7 +19,7 @@ public class RoomRepository {
     public List<Room> findAll() {
         List<Room> rooms = new ArrayList<>();
         String query = """
-                SELECT id, name
+                SELECT id, name, capacity
                 FROM room
                 ORDER BY name;
                 """;
@@ -30,6 +30,7 @@ public class RoomRepository {
                 Room room = new Room();
                 room.setId((UUID) rs.getObject("id"));
                 room.setName(rs.getString("name"));
+                room.setCapacity(rs.getInt("capacity"));
                 rooms.add(room);
             }
         } catch (SQLException e) {
@@ -40,7 +41,7 @@ public class RoomRepository {
 
     public Room findById(UUID id) {
         String query = """
-                SELECT id, name
+                SELECT id, name, capacity
                 FROM room
                 WHERE id = ?;
                 """;
@@ -52,6 +53,7 @@ public class RoomRepository {
                 Room room = new Room();
                 room.setId((UUID) rs.getObject("id"));
                 room.setName(rs.getString("name"));
+                room.setCapacity(rs.getInt("capacity"));
                 return room;
             }
         } catch (SQLException e) {
@@ -62,14 +64,15 @@ public class RoomRepository {
 
     public Room create(Room room) {
         String query = """
-                INSERT INTO room (id, name)
-                VALUES (?, ?)
+                INSERT INTO room (id, name, capacity)
+                VALUES (?, ?, ?)
                 RETURNING id;
                 """;
         try (Connection connection = dbConfig.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setObject(1, room.getId());
             stmt.setString(2, room.getName());
+            stmt.setInt(3, room.getCapacity());
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 UUID returnedId = (UUID) rs.getObject("id");
@@ -84,7 +87,7 @@ public class RoomRepository {
     public Room update(Room room) {
         String query = """
                 UPDATE room
-                SET name = ?
+                SET name = ?, capacity = ?
                 WHERE id = ?
                 RETURNING id;
                 """;
@@ -92,6 +95,7 @@ public class RoomRepository {
              PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, room.getName());
             stmt.setObject(2, room.getId());
+            stmt.setInt(3, room.getCapacity());
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 room.setId((UUID) rs.getObject("id"));
