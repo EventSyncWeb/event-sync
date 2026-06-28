@@ -32,7 +32,7 @@ export default function QuestionList({ questions, onUpvote }) {
   }
 
   const sorted = [...questions].sort(
-    (a, b) => (b.upvotes ?? 0) - (a.upvotes ?? 0),
+    (a, b) => (b.upvoteCount ?? 0) - (a.upvoteCount ?? 0),
   );
 
   return (
@@ -77,7 +77,7 @@ export default function QuestionList({ questions, onUpvote }) {
               disabled:cursor-not-allowed`}
           >
             <span className="text-[10px]">▲</span>
-            <span>{(q.upvotes ?? 0) + (upvotedIds.has(q.id) ? 1 : 0)}</span>
+            <span>{(q.upvoteCount ?? 0) + (upvotedIds.has(q.id) ? 1 : 0)}</span>
           </button>
         </li>
       ))}
