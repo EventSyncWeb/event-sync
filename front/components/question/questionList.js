@@ -4,18 +4,29 @@ import { useState } from "react";
 import { upvoteQuestion } from "@/services/questionService";
 
 export default function QuestionList({ questions, onUpvote }) {
-  const [upvotedIds, setUpvotedIds] = useState(new Set());
+  const [upvotedIds, setUpvotedIds] = useState(
+    () => new Set(questions.filter((q) => q.votedByCurrentUser).map((q) => q.id)),
+  );
   const [loadingId, setLoadingId] = useState(null);
+  const [errorId, setErrorId] = useState(null);
+  const [errorMsg, setErrorMsg] = useState("");
 
   const handleUpvote = async (id) => {
     if (upvotedIds.has(id) || loadingId) return;
     setLoadingId(id);
+    setErrorId(null);
+    setErrorMsg("");
     try {
       await upvoteQuestion(id);
       setUpvotedIds((prev) => new Set([...prev, id]));
       onUpvote?.(id);
     } catch (err) {
-      console.error("Upvote failed :", err.message);
+      setErrorId(id);
+      setErrorMsg(err.message);
+      setTimeout(() => {
+        setErrorId(null);
+        setErrorMsg("");
+      }, 3000);
     } finally {
       setLoadingId(null);
     }
@@ -64,21 +75,26 @@ export default function QuestionList({ questions, onUpvote }) {
           <p className="text-sm text-white leading-relaxed">{q.content}</p>
 
           {/* Upvote */}
-          <button
-            onClick={() => handleUpvote(q.id)}
-            disabled={upvotedIds.has(q.id) || loadingId === q.id}
-            aria-label="Voter pour cette question"
-            className={`self-start flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border transition
-              ${
-                upvotedIds.has(q.id)
-                  ? "border-indigo-400 text-indigo-600 bg-indigo-50"
-                  : "border-slate-200 text-slate-500 hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50"
-              }
-              disabled:cursor-not-allowed`}
-          >
-            <span className="text-[10px]">▲</span>
-            <span>{(q.upvoteCount ?? 0) + (upvotedIds.has(q.id) ? 1 : 0)}</span>
-          </button>
+          <div className="self-start flex items-center gap-2">
+            <button
+              onClick={() => handleUpvote(q.id)}
+              disabled={upvotedIds.has(q.id) || loadingId === q.id}
+              aria-label="Voter pour cette question"
+              className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border transition
+                ${
+                  upvotedIds.has(q.id)
+                    ? "border-indigo-400 text-indigo-600 bg-indigo-50"
+                    : "border-slate-200 text-slate-500 hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50"
+                }
+                disabled:cursor-not-allowed`}
+            >
+              <span className="text-[10px]">▲</span>
+              <span>{(q.upvoteCount ?? 0) + (upvotedIds.has(q.id) ? 1 : 0)}</span>
+            </button>
+            {errorId === q.id && (
+              <span className="text-xs text-red-400">{errorMsg}</span>
+            )}
+          </div>
         </li>
       ))}
     </ul>
