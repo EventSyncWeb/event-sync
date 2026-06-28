@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/speakers")
+@RequestMapping("/api/speakers")
 @AllArgsConstructor
 public class SpeakerController {
 
