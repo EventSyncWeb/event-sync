@@ -13,4 +13,5 @@ public class Question {
     private Timestamp creationDate;
     private Integer upvoteCount;
     private UUID sessionId;
+    private boolean votedByCurrentUser;
 }

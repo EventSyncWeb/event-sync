@@ -30,8 +30,8 @@ public class QuestionService {
         return optionalQuestion.get();
     }
 
-   public List<Question> getQuestionsBySessionId(UUID sessionId){
-       List<Question> Questions = questionRepository.findQuestionsBySessionId(sessionId);
+   public List<Question> getQuestionsBySessionId(UUID sessionId, String visitorId){
+       List<Question> Questions = questionRepository.findQuestionsBySessionId(sessionId, visitorId);
 
        if(Questions.isEmpty()){
            throw new NotFoundException("Session.id=" + sessionId + "is not found");
@@ -50,8 +50,8 @@ public class QuestionService {
         return questionRepository.createQuestion(question);
     }
 
-    public void upvoteQuestion(UUID questionId) {
-        questionRepository.upvoteCount(questionId);
+    public void upvoteQuestion(UUID questionId, String visitorId) {
+        questionRepository.upvoteCount(questionId, visitorId);
     }
 }
 

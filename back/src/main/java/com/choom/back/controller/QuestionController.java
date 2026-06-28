@@ -29,8 +29,11 @@ public class QuestionController {
     }
 
     @GetMapping("/question/session/{sessionId}")
-    public ResponseEntity<List<Question>> getQuestionsBySessionId(@PathVariable UUID sessionId){
-        List<Question> questions = questionServices.getQuestionsBySessionId(sessionId);
+    public ResponseEntity<List<Question>> getQuestionsBySessionId(
+            @PathVariable UUID sessionId,
+            @RequestHeader(value = "X-Visitor-Id", required = false) String visitorId
+    ){
+        List<Question> questions = questionServices.getQuestionsBySessionId(sessionId, visitorId != null ? visitorId : "anonymous");
         return ResponseEntity.ok(questions);
     }
 
@@ -52,9 +55,10 @@ public class QuestionController {
 
     @PutMapping("/question/{id}/upvote")
     public ResponseEntity<String> upvote(
-            @PathVariable UUID id
+            @PathVariable UUID id,
+            @RequestHeader("X-Visitor-Id") String visitorId
     ){
-        questionServices.upvoteQuestion(id);
+        questionServices.upvoteQuestion(id, visitorId);
         return ResponseEntity.ok("Upvote added");
     }
 
