@@ -13,7 +13,7 @@ async function getSession(id) {
 
 async function getSpeakers(sessionId) {
   const base = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-  const res = await fetch(`${base}/speakers/session/${sessionId}`, {
+  const res = await fetch(`${base}/api/speakers/session/${sessionId}`, {
     cache: "no-store",
   });
   if (!res.ok) return [];
