@@ -6,7 +6,7 @@ import QuestionSection from "@/components/question/questionSection";
 
 async function getSession(id) {
   const base = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-  const res = await fetch(`${base}/api/session/${id}`, { cache: "no-store" });
+  const res = await fetch(`${base}/api/sessions/${id}`, { cache: "no-store" });
   if (!res.ok) throw new Error("Session introuvable");
   return res.json();
 }

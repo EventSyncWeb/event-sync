@@ -11,7 +11,7 @@ async function getEvent(id) {
 
 async function getSessions(eventId) {
   const base = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-  const res = await fetch(`${base}/api/session/event/${eventId}`, {
+  const res = await fetch(`${base}/api/sessions/event/${eventId}`, {
     cache: "no-store",
   });
   if (!res.ok) return [];
