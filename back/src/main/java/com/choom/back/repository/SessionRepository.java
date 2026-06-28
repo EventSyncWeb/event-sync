@@ -189,7 +189,6 @@ public class SessionRepository {
             preparedStatement.setObject(4, session.getStartTime());
             preparedStatement.setObject(5, session.getEndTime());
             preparedStatement.setObject(6, session.getRoom());
-            preparedStatement.setObject(7, session.getCapacity());
             preparedStatement.setObject(8, session.getEventId());
             preparedStatement.setObject(9, session.getId());
 
