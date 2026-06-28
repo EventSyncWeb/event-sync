@@ -15,7 +15,7 @@ function QuestionsView({ promise, onUpvote }) {
           {questions.length > 0
             ? `${questions.length} question${questions.length > 1 ? "s" : ""}`
             : "Questions"}
-        </p>
+        </h3>
       </div>
       {questions.length === 0 ? (
         <p className="text-center text-blue-300/40 py-8">
