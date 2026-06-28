@@ -1,41 +1,29 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-
-async function handleResponse(res) {
-  if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(errorText || "API Error");
-  }
-  return res.json();
-}
+import { apiGet, apiPost, apiPut } from "./api";
 
 export async function getAllQuestions() {
-  const res = await fetch(`${API_BASE_URL}/question`, {
-    cache: "no-store",
-  });
-  return handleResponse(res);
+  return apiGet("/question");
+}
+
+export async function getQuestionsBySessionId(sessionId) {
+  try {
+    return await apiGet(`/question/session/${sessionId}`);
+  } catch {
+    return [];
+  }
 }
 
 export async function getQuestionById(id) {
-  const res = await fetch(`${API_BASE_URL}/question/${id}`, {
-    cache: "no-store",
-  });
-  return handleResponse(res);
+  return apiGet(`/question/${id}`);
 }
 
 export async function createQuestion(questionData) {
-  const res = await fetch(`${API_BASE_URL}/question`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(questionData),
-  });
-  return handleResponse(res);
+  return apiPost("/question", questionData);
+}
+
+export async function createQuestionForSession(sessionId, questionData) {
+  return apiPost(`/question/session/${sessionId}`, questionData);
 }
 
 export async function upvoteQuestion(id) {
-  const res = await fetch(`${API_BASE_URL}/question/${id}/upvote`, {
-    method: "PUT",
-  });
-
-  if (!res.ok) throw new Error("Upvote failed");
-  return res.text();
+  return apiPut(`/question/${id}/upvote`);
 }
