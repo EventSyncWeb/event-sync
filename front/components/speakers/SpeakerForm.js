@@ -8,6 +8,7 @@ const EMPTY_FORM = {
   email: "",
   company: "",
   biography: "",
+  profilePic: "",
 };
 
 export default function SpeakerForm({ initialValues, onSubmit, submitLabel }) {
@@ -74,6 +75,16 @@ export default function SpeakerForm({ initialValues, onSubmit, submitLabel }) {
           name="company"
           value={form.company}
           onChange={handleChange}
+          className="w-full rounded border px-3 py-2 text-sm"
+        />
+      </div>
+      <div>
+        <label className="mb-1 block text-sm font-medium">Photo de profil (URL)</label>
+        <input
+          name="profilePic"
+          value={form.profilePic || ""}
+          onChange={handleChange}
+          placeholder="https://example.com/photo.jpg"
           className="w-full rounded border px-3 py-2 text-sm"
         />
       </div>

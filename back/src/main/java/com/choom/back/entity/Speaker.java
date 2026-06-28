@@ -17,6 +17,7 @@ public class Speaker {
     private String linkedIn;
     private String company;
     private String email;
+    private String profilePic;
     @JsonIgnoreProperties("speakers")
     private List<Session> sessions = new ArrayList<>();
 }

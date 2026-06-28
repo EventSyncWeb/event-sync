@@ -24,7 +24,7 @@ public class SpeakerRepository {
     public List<Speaker> findAllSpeaker() {
         Map<UUID, Speaker> speakerMap = new LinkedHashMap<>();
         String query = """
-            SELECT s.id, s.first_name, s.last_name, s.description, s.linkedIn, s.company, s.email,
+            SELECT s.id, s.first_name, s.last_name, s.description, s.linkedIn, s.company, s.email, s.profile_pic,
                    ss.session_id, sess.title AS session_title
             FROM speaker s
             LEFT JOIN session_speakers ss ON s.id = ss.speaker_id
@@ -45,7 +45,7 @@ public class SpeakerRepository {
     public List<Speaker> findSpeakersByName(String query) {
         Map<UUID, Speaker> speakerMap = new LinkedHashMap<>();
         String sql = """
-                SELECT s.id, s.first_name, s.last_name, s.description, s.linkedIn, s.company, s.email,
+                SELECT s.id, s.first_name, s.last_name, s.description, s.linkedIn, s.company, s.email, s.profile_pic,
                        ss.session_id, sess.title AS session_title
                 FROM speaker s
                 LEFT JOIN session_speakers ss ON s.id = ss.speaker_id
@@ -68,7 +68,7 @@ public class SpeakerRepository {
     public Speaker findSpeakerById(UUID id) {
         Map<UUID, Speaker> speakerMap = new LinkedHashMap<>();
         String query = """
-                SELECT s.id, s.first_name, s.last_name, s.description, s.linkedIn, s.company, s.email,
+                SELECT s.id, s.first_name, s.last_name, s.description, s.linkedIn, s.company, s.email, s.profile_pic,
                        ss.session_id, sess.title AS session_title
                 FROM speaker s
                 LEFT JOIN session_speakers ss ON s.id = ss.speaker_id
@@ -90,7 +90,7 @@ public class SpeakerRepository {
     public List<Speaker> findSpeakersBySessionId(UUID sessionId) {
         Map<UUID, Speaker> speakerMap = new LinkedHashMap<>();
         String query = """
-                SELECT s.id, s.first_name, s.last_name, s.description, s.linkedIn, s.company, s.email,
+                SELECT s.id, s.first_name, s.last_name, s.description, s.linkedIn, s.company, s.email, s.profile_pic,
                        ss_all.session_id, sess_all.title AS session_title
                 FROM speaker s
                 JOIN session_speakers ss_filter ON s.id = ss_filter.speaker_id AND ss_filter.session_id = ?
@@ -122,6 +122,7 @@ public class SpeakerRepository {
                 speaker.setLinkedIn(rs.getString("linkedIn"));
                 speaker.setCompany(rs.getString("company"));
                 speaker.setEmail(rs.getString("email"));
+                speaker.setProfilePic(rs.getString("profile_pic"));
                 speakerMap.put(id, speaker);
             }
             UUID sessionId = rs.getObject("session_id") != null ? (UUID) rs.getObject("session_id") : null;
@@ -138,7 +139,7 @@ public class SpeakerRepository {
     }
 
     public Speaker saveSpeaker(Speaker speaker) {
-        String query = "INSERT INTO speaker (id, first_name, last_name, description, linkedIn, company, email) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO speaker (id, first_name, last_name, description, linkedIn, company, email, profile_pic) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection connection = dbConfig.getConnection()) {
             if (speaker.getId() == null) {
                 speaker.setId(UUID.randomUUID());
@@ -152,6 +153,7 @@ public class SpeakerRepository {
                 stmt.setString(5, speaker.getLinkedIn());
                 stmt.setString(6, speaker.getCompany());
                 stmt.setString(7, speaker.getEmail());
+                stmt.setString(8, speaker.getProfilePic());
                 stmt.executeUpdate();
             }
 

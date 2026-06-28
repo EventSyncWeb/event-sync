@@ -1,9 +1,29 @@
+import Link from "next/link";
+
 export default function SpeakerCard({ speaker }) {
   return (
-    <div className="rounded-xl border border-blue-800/30 bg-slate-800/50 backdrop-blur-sm px-4 py-3 shadow-lg shadow-blue-900/20 transition-all duration-200 hover:shadow-xl hover:shadow-blue-900/30 hover:border-blue-500/50">
-      <p className="font-medium text-white">
-        {speaker.firstName} {speaker.lastName}
-      </p>
+    <Link
+      href={`/speakers/${speaker.id}`}
+      className="block rounded-xl border border-blue-800/30 bg-slate-800/50 backdrop-blur-sm px-4 py-3 shadow-lg shadow-blue-900/20 transition-all duration-200 hover:shadow-xl hover:shadow-blue-900/30 hover:border-blue-500/50"
+    >
+      <div className="flex items-center gap-3">
+        {speaker.profilePic ? (
+          <img
+            src={speaker.profilePic}
+            alt={`${speaker.firstName} ${speaker.lastName}`}
+            className="h-10 w-10 rounded-full object-cover border border-indigo-500/30"
+          />
+        ) : (
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-600/20 text-sm font-bold text-indigo-400 shrink-0">
+            {speaker.firstName?.[0]}{speaker.lastName?.[0]}
+          </div>
+        )}
+        <div className="min-w-0">
+          <p className="font-medium text-white truncate">
+            {speaker.firstName} {speaker.lastName}
+          </p>
+        </div>
+      </div>
       {speaker.sessionTitle && (
         <p className="text-xs text-blue-400">Session : {speaker.sessionTitle}</p>
       )}
@@ -18,6 +38,6 @@ export default function SpeakerCard({ speaker }) {
           {speaker.biography || speaker.description}
         </p>
       )}
-    </div>
+    </Link>
   );
 }

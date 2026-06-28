@@ -47,9 +47,6 @@ public class SessionService {
 
     public List<Session> getSessionByEventId(UUID eventId){
         List<Session> sessions = sessionRepository.findSessionByEventId(eventId);
-        if(sessions.isEmpty()){
-            throw new NotFoundException("Session with id " + eventId + " not found");
-        }
         sessions.forEach(s -> s.setOnLive(isOnLive(s)));
         return sessions;
     }

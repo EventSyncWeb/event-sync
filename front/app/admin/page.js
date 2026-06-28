@@ -99,7 +99,7 @@ export default function AdminDashboard() {
           const sid = s.sessionId || s.id;
           try {
             const base = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-            const res = await fetch(`${base}/speakers/session/${sid}`, {
+            const res = await fetch(`${base}/api/speakers/session/${sid}`, {
               cache: "no-store",
             });
             if (res.ok) {

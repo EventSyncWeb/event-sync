@@ -9,7 +9,11 @@ export async function getSession(id) {
 }
 
 export async function getSessionsByEvent(eventId) {
-  return apiGet(`/api/sessions/event/${eventId}`);
+  try {
+    return await apiGet(`/api/sessions/event/${eventId}`);
+  } catch {
+    return [];
+  }
 }
 
 export async function createSession(data) {
