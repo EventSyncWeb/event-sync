@@ -42,7 +42,7 @@ public class SessionRepository {
     public List<Session> findAllSession() {
         List<Session> sessionList = new ArrayList<>();
         String query = """
-                SELECT s.id, s.title, s.description, s.date, s.start_time, s.end_time, s.room_id, s.capacity, s.event_id, r.name AS room_name
+                SELECT s.id, s.title, s.description, s.date, s.start_time, s.end_time, s.room_id, s.event_id, r.name AS room_name
                 FROM session s
                 LEFT JOIN room r ON s.room_id = r.id
                 ORDER BY s.start_time; 
@@ -62,7 +62,6 @@ public class SessionRepository {
                 session.setEndTime(resultSet.getTime("end_time").toLocalTime());
                 session.setRoom((UUID) resultSet.getObject("room_id"));
                 session.setRoomName(resultSet.getString("room_name"));
-                session.setCapacity((Integer) resultSet.getObject("capacity"));
                 session.setEventId((UUID) resultSet.getObject("event_id"));
                 session.setSpeakers(findSpeakersForSession(session.getId()));
                 sessionList.add(session);
@@ -76,7 +75,7 @@ public class SessionRepository {
 
     public Session findSessionById(UUID id) {
         String  query = """
-                SELECT s.id, s.title, s.description, s.date, s.start_time, s.end_time, s.room_id, s.capacity, s.event_id, r.name AS room_name
+                SELECT s.id, s.title, s.description, s.date, s.start_time, s.end_time, s.room_id, s.event_id, r.name AS room_name
                 FROM session s
                 LEFT JOIN room r ON s.room_id = r.id
                 WHERE s.id = ?;
@@ -96,7 +95,6 @@ public class SessionRepository {
                 session.setEndTime(resultSet.getTime("end_time").toLocalTime());
                 session.setRoom((UUID) resultSet.getObject("room_id"));
                 session.setRoomName(resultSet.getString("room_name"));
-                session.setCapacity((Integer) resultSet.getObject("capacity"));
                 session.setEventId((UUID) resultSet.getObject("event_id"));
                 session.setSpeakers(findSpeakersForSession(session.getId()));
                 return session;
@@ -111,7 +109,7 @@ public class SessionRepository {
     public List<Session> findSessionByEventId(UUID eventId) {
         List<Session> sessionList = new ArrayList<>();
         String query = """
-                SELECT s.id, s.title, s.description, s.date, s.start_time, s.end_time, s.room_id, s.capacity, s.event_id, r.name AS room_name
+                SELECT s.id, s.title, s.description, s.date, s.start_time, s.end_time, s.room_id, s.event_id, r.name AS room_name
                 FROM session s
                 LEFT JOIN room r ON s.room_id = r.id
                 WHERE s.event_id = ?
@@ -132,7 +130,6 @@ public class SessionRepository {
                 session.setEndTime(resultSet.getTime("end_time").toLocalTime());
                 session.setRoom((UUID) resultSet.getObject("room_id"));
                 session.setRoomName(resultSet.getString("room_name"));
-                session.setCapacity((Integer) resultSet.getObject("capacity"));
                 session.setEventId((UUID) resultSet.getObject("event_id"));
                 session.setSpeakers(findSpeakersForSession(session.getId()));
                 sessionList.add(session);
@@ -150,8 +147,8 @@ public class SessionRepository {
         }
 
         String query = """
-                INSERT INTO session (id, title, description, start_time, end_time, room_id, capacity, event_id, date)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO session (id, title, description, start_time, end_time, room_id, event_id, date)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """;
 
         try(Connection connection = dbConfig.getConnection();
@@ -162,7 +159,6 @@ public class SessionRepository {
             preparedStatement.setObject(4,session.getStartTime());
             preparedStatement.setObject(5, session.getEndTime());
             preparedStatement.setObject(6, session.getRoom());
-            preparedStatement.setObject(7, session.getCapacity());
             preparedStatement.setObject(8, session.getEventId());
             preparedStatement.setObject(9, session.getDate());
             preparedStatement.executeUpdate();
