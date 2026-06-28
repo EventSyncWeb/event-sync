@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { isLive } from "@/lib/utils";
+import { formatDate, isLive } from "@/lib/utils";
 import LiveIndicator from "./LiveIndicator";
 
 export default function SessionCard({ session, speakers = [] }) {
   const id = session.sessionId || session.id;
-  const live = isLive(session.startTime, session.endTime);
+  const live = isLive(session.startTime, session.endTime, session.date);
 
   return (
     <div className="rounded-xl border border-blue-800/30 bg-slate-800/50 backdrop-blur-sm p-4 shadow-lg shadow-blue-900/20 transition-all duration-200 hover:shadow-xl hover:shadow-blue-900/30 hover:border-blue-500/50">
@@ -15,7 +15,7 @@ export default function SessionCard({ session, speakers = [] }) {
             <LiveIndicator isLive={live} />
           </div>
           <p className="mt-0.5 text-sm text-blue-200/70">
-            {session.startTime} — {session.endTime}
+            {formatDate(session.date)} - {session.startTime} — {session.endTime}
             {session.roomName && ` - ${session.roomName}`}
           </p>
           <p className="mt-1 text-sm text-blue-300/60 line-clamp-2">
@@ -23,10 +23,11 @@ export default function SessionCard({ session, speakers = [] }) {
           </p>
           {speakers.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1.5">
+              <p className="rounded-full bg-slate-900/50 px-2.5 py-0.5 text-xs text-blue-300/60">Presented by :</p>
               {speakers.map((sp) => (
                 <span
                   key={sp.id}
-                  className="rounded-full bg-slate-800/50 px-2.5 py-0.5 text-xs text-blue-300/60"
+                  className="rounded-full bg-slate-900/50 px-2.5 py-0.5 text-xs text-blue-300/60"
                 >
                   {sp.firstName} {sp.lastName}
                 </span>

@@ -7,8 +7,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,7 +42,7 @@ public class SessionRepository {
     public List<Session> findAllSession() {
         List<Session> sessionList = new ArrayList<>();
         String query = """
-                SELECT s.id, s.title, s.description, s.date, s.start_time, s.end_time, s.room_id, s.capacity, s.event_id, r.name AS room_name
+                SELECT s.id, s.title, s.description, s.date, s.start_time, s.end_time, s.room_id, s.event_id, r.name AS room_name
                 FROM session s
                 LEFT JOIN room r ON s.room_id = r.id
                 ORDER BY s.start_time; 
@@ -59,7 +62,6 @@ public class SessionRepository {
                 session.setEndTime(resultSet.getTime("end_time").toLocalTime());
                 session.setRoom((UUID) resultSet.getObject("room_id"));
                 session.setRoomName(resultSet.getString("room_name"));
-                session.setCapacity((Integer) resultSet.getObject("capacity"));
                 session.setEventId((UUID) resultSet.getObject("event_id"));
                 session.setSpeakers(findSpeakersForSession(session.getId()));
                 sessionList.add(session);
@@ -73,7 +75,7 @@ public class SessionRepository {
 
     public Session findSessionById(UUID id) {
         String  query = """
-                SELECT s.id, s.title, s.description, s.date, s.start_time, s.end_time, s.room_id, s.capacity, s.event_id, r.name AS room_name
+                SELECT s.id, s.title, s.description, s.date, s.start_time, s.end_time, s.room_id, s.event_id, r.name AS room_name
                 FROM session s
                 LEFT JOIN room r ON s.room_id = r.id
                 WHERE s.id = ?;
@@ -93,7 +95,6 @@ public class SessionRepository {
                 session.setEndTime(resultSet.getTime("end_time").toLocalTime());
                 session.setRoom((UUID) resultSet.getObject("room_id"));
                 session.setRoomName(resultSet.getString("room_name"));
-                session.setCapacity((Integer) resultSet.getObject("capacity"));
                 session.setEventId((UUID) resultSet.getObject("event_id"));
                 session.setSpeakers(findSpeakersForSession(session.getId()));
                 return session;
@@ -108,7 +109,7 @@ public class SessionRepository {
     public List<Session> findSessionByEventId(UUID eventId) {
         List<Session> sessionList = new ArrayList<>();
         String query = """
-                SELECT s.id, s.title, s.description, s.date, s.start_time, s.end_time, s.room_id, s.capacity, s.event_id, r.name AS room_name
+                SELECT s.id, s.title, s.description, s.date, s.start_time, s.end_time, s.room_id, s.event_id, r.name AS room_name
                 FROM session s
                 LEFT JOIN room r ON s.room_id = r.id
                 WHERE s.event_id = ?
@@ -129,7 +130,6 @@ public class SessionRepository {
                 session.setEndTime(resultSet.getTime("end_time").toLocalTime());
                 session.setRoom((UUID) resultSet.getObject("room_id"));
                 session.setRoomName(resultSet.getString("room_name"));
-                session.setCapacity((Integer) resultSet.getObject("capacity"));
                 session.setEventId((UUID) resultSet.getObject("event_id"));
                 session.setSpeakers(findSpeakersForSession(session.getId()));
                 sessionList.add(session);
@@ -147,8 +147,8 @@ public class SessionRepository {
         }
 
         String query = """
-                INSERT INTO session (id, title, description, start_time, end_time, room_id, capacity, event_id, date)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO session (id, title, description, start_time, end_time, room_id, event_id, date)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """;
 
         try(Connection connection = dbConfig.getConnection();
@@ -159,7 +159,6 @@ public class SessionRepository {
             preparedStatement.setObject(4,session.getStartTime());
             preparedStatement.setObject(5, session.getEndTime());
             preparedStatement.setObject(6, session.getRoom());
-            preparedStatement.setObject(7, session.getCapacity());
             preparedStatement.setObject(8, session.getEventId());
             preparedStatement.setObject(9, session.getDate());
             preparedStatement.executeUpdate();
@@ -190,7 +189,6 @@ public class SessionRepository {
             preparedStatement.setObject(4, session.getStartTime());
             preparedStatement.setObject(5, session.getEndTime());
             preparedStatement.setObject(6, session.getRoom());
-            preparedStatement.setObject(7, session.getCapacity());
             preparedStatement.setObject(8, session.getEventId());
             preparedStatement.setObject(9, session.getId());
 
@@ -263,31 +261,61 @@ public class SessionRepository {
     }
 
     public boolean existsConflictingSession(UUID roomId, LocalTime startTime, LocalTime endTime, UUID excludeId) {
+        return existsConflictingSession(roomId, null, startTime, endTime, excludeId);
+    }
+
+    public boolean existsConflictingSession(UUID roomId, LocalDate date, LocalTime startTime, LocalTime endTime, UUID excludeId) {
         String query;
+        boolean hasDate = date != null;
         if (excludeId != null) {
-            query = """
-                SELECT COUNT(*) FROM session
-                WHERE room_id = ?
-                  AND start_time < ?
-                  AND end_time > ?
-                  AND id != ?
-            """;
+            if (hasDate) {
+                query = """
+                    SELECT COUNT(*) FROM session
+                    WHERE room_id = ?
+                      AND date = ?
+                      AND start_time < ?
+                      AND end_time > ?
+                      AND id != ?
+                """;
+            } else {
+                query = """
+                    SELECT COUNT(*) FROM session
+                    WHERE room_id = ?
+                      AND start_time < ?
+                      AND end_time > ?
+                      AND id != ?
+                """;
+            }
         } else {
-            query = """
-                SELECT COUNT(*) FROM session
-                WHERE room_id = ?
-                  AND start_time < ?
-                  AND end_time > ?
-            """;
+            if (hasDate) {
+                query = """
+                    SELECT COUNT(*) FROM session
+                    WHERE room_id = ?
+                      AND date = ?
+                      AND start_time < ?
+                      AND end_time > ?
+                """;
+            } else {
+                query = """
+                    SELECT COUNT(*) FROM session
+                    WHERE room_id = ?
+                      AND start_time < ?
+                      AND end_time > ?
+                """;
+            }
         }
 
         try (Connection connection = dbConfig.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setObject(1, roomId);
-            stmt.setObject(2, endTime);
-            stmt.setObject(3, startTime);
+            int idx = 2;
+            if (hasDate) {
+                stmt.setObject(idx++, date);
+            }
+            stmt.setObject(idx++, endTime);
+            stmt.setObject(idx++, startTime);
             if (excludeId != null) {
-                stmt.setObject(4, excludeId);
+                stmt.setObject(idx, excludeId);
             }
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -317,14 +345,16 @@ public class SessionRepository {
             while (rs.next()) {
                 Speaker speaker = new Speaker();
                 speaker.setId((UUID) rs.getObject("id"));
-                speaker.setSessionId(sessionId);
-                speaker.setSessionTitle(rs.getString("session_title"));
                 speaker.setFirstName(rs.getString("first_name"));
                 speaker.setLastName(rs.getString("last_name"));
                 speaker.setBiography(rs.getString("description"));
                 speaker.setLinkedIn(rs.getString("linkedIn"));
                 speaker.setCompany(rs.getString("company"));
                 speaker.setEmail(rs.getString("email"));
+                Session s = new Session();
+                s.setId(sessionId);
+                s.setTitle(rs.getString("session_title"));
+                speaker.getSessions().add(s);
                 speakers.add(speaker);
             }
         } catch (SQLException e) {
@@ -359,6 +389,74 @@ public class SessionRepository {
         }
     }
 
+    public boolean existsSpeakerTimeConflict(UUID speakerId, LocalDate date, LocalTime startTime, LocalTime endTime, UUID excludeSessionId) {
+        String query;
+        if (excludeSessionId != null) {
+            query = """
+                SELECT COUNT(*) FROM session s
+                JOIN session_speakers ss ON s.id = ss.session_id
+                WHERE ss.speaker_id = ?
+                  AND s.date = ?
+                  AND s.start_time < ?
+                  AND s.end_time > ?
+                  AND s.id != ?
+            """;
+        } else {
+            query = """
+                SELECT COUNT(*) FROM session s
+                JOIN session_speakers ss ON s.id = ss.session_id
+                WHERE ss.speaker_id = ?
+                  AND s.date = ?
+                  AND s.start_time < ?
+                  AND s.end_time > ?
+            """;
+        }
+
+        try (Connection connection = dbConfig.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setObject(1, speakerId);
+            stmt.setObject(2, date);
+            stmt.setObject(3, endTime);
+            stmt.setObject(4, startTime);
+            if (excludeSessionId != null) {
+                stmt.setObject(5, excludeSessionId);
+            }
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
+
+    public List<Session> findSessionsByIds(Collection<UUID> ids) {
+        if (ids == null || ids.isEmpty()) return List.of();
+        List<Session> sessions = new ArrayList<>();
+        String placeholders = String.join(",", Collections.nCopies(ids.size(), "?"));
+        String query = "SELECT id, date, start_time, end_time FROM session WHERE id IN (" + placeholders + ")";
+
+        try (Connection connection = dbConfig.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            int i = 1;
+            for (UUID id : ids) {
+                stmt.setObject(i++, id);
+            }
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Session s = new Session();
+                s.setId((UUID) rs.getObject("id"));
+                s.setDate(rs.getDate("date").toLocalDate());
+                s.setStartTime(rs.getTime("start_time").toLocalTime());
+                s.setEndTime(rs.getTime("end_time").toLocalTime());
+                sessions.add(s);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return sessions;
+    }
 
 
 }

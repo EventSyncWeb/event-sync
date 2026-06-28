@@ -30,6 +30,15 @@ public class QuestionService {
         return optionalQuestion.get();
     }
 
+   public List<Question> getQuestionsBySessionId(UUID sessionId){
+       List<Question> Questions = questionRepository.findQuestionsBySessionId(sessionId);
+
+       if(Questions.isEmpty()){
+           throw new NotFoundException("Session.id=" + sessionId + "is not found");
+       }
+       return Questions;
+   }
+
     public Question createQuestion (Question question){
         questionValidator.validateCreate(question);
         return questionRepository.createQuestion(question);

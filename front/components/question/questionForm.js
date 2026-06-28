@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { createQuestion } from "@/services/questionService";
+import { createQuestionForSession } from "@/services/questionService";
 
-export default function QuestionForm({ onQuestionAdded }) {
+export default function QuestionForm({ sessionId, onQuestionAdded }) {
   const [content, setContent] = useState("");
   const [author, setAuthor] = useState("");
   const [loading, setLoading] = useState(false);
@@ -19,9 +19,9 @@ export default function QuestionForm({ onQuestionAdded }) {
     setSuccess(false);
 
     try {
-      const newQuestion = await createQuestion({
+      const newQuestion = await createQuestionForSession(sessionId, {
         content: content.trim(),
-        author: author.trim() || "Anonymous",
+        authorName: author.trim() || "Anonymous",
       });
       setContent("");
       setAuthor("");

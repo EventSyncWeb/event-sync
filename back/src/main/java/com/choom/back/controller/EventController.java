@@ -27,7 +27,9 @@ public class EventController {
     public ResponseEntity<?> getAllEvents(@RequestParam(required = false) String q) {
         try {
             List<Event> events = eventService.getAllEvents(q);
-            return ResponseEntity.ok(events);
+            return ResponseEntity.ok()
+                    .header("Content-Range", "events 0-10/50" + events.size() + "/" + events.size())
+                    .body(events);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
         }

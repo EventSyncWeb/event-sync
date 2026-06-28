@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/session")
+@RequestMapping("/api/sessions")
 @AllArgsConstructor
 public class SessionController {
     private SessionService sessionService;
@@ -24,7 +24,9 @@ public class SessionController {
     public ResponseEntity<?> getAllSessions() {
         try {
             List<Session> sessions = sessionService.getAllSession();
-            return ResponseEntity.ok(sessions);
+            return ResponseEntity.ok()
+                    .header("Content-Range", "sessions 0-10/50" + sessions.size() + "/" + sessions.size())
+                    .body(sessions);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
         }

@@ -14,7 +14,6 @@ public class Session {
     private UUID id;
     private String title;
     private String description;
-    private Integer capacity;
     private LocalDate date;
     private LocalTime startTime;
     private LocalTime endTime;

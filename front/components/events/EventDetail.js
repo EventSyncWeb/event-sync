@@ -6,7 +6,7 @@ export default function EventDetail({ event }) {
       <h1 className="text-3xl font-bold text-white">{event.title}</h1>
       <p className="text-blue-200/70">{event.description}</p>
       <p className="text-sm text-blue-300/50">
-        {event.location} — {formatDate(event.startDate)} au{" "}
+        {event.location} — {formatDate(event.startDate)} au {" "}
         {formatDate(event.endDate)}
       </p>
     </div>

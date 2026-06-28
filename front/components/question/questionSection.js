@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, use, Suspense } from "react";
-import { getAllQuestions } from "@/services/questionService";
+import { getQuestionsBySessionId } from "@/services/questionService";
 import QuestionForm from "./questionForm";
 import QuestionList from "./questionList";
 
@@ -28,12 +28,12 @@ function QuestionsView({ promise, onUpvote }) {
   );
 }
 
-export default function QuestionSection() {
-  const [promise, setPromise] = useState(() => getAllQuestions());
+export default function QuestionSection({ sessionId }) {
+  const [promise, setPromise] = useState(() => getQuestionsBySessionId(sessionId));
 
   const handleRefresh = useCallback(() => {
-    setPromise(getAllQuestions());
-  }, []);
+    setPromise(getQuestionsBySessionId(sessionId));
+  }, [sessionId]);
 
   const handleQuestionAdded = () => {
     handleRefresh();

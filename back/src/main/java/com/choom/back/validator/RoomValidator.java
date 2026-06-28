@@ -14,6 +14,9 @@ public class RoomValidator {
         if (room.getName() == null || room.getName().isBlank()) {
             message += "Room name is required";
         }
+        if (room.getCapacity() == null || room.getCapacity() <= 0) {
+            message += "Room capacity is required";
+        }
         if (!message.isEmpty()) {
             throw new BadRequestException(message);
         }

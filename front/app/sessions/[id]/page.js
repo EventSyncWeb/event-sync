@@ -6,7 +6,7 @@ import QuestionSection from "@/components/question/questionSection";
 
 async function getSession(id) {
   const base = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-  const res = await fetch(`${base}/api/session/${id}`, { cache: "no-store" });
+  const res = await fetch(`${base}/api/sessions/${id}`, { cache: "no-store" });
   if (!res.ok) throw new Error("Session introuvable");
   return res.json();
 }
@@ -33,14 +33,15 @@ export default async function SessionPage({ params }) {
         <div className="mx-auto max-w-3xl">
           <p className="rounded-lg bg-red-500/10 border border-red-500/20 p-4 text-red-400">Session not found.</p>
           <Link href="/events" className="mt-4 inline-block text-blue-400 hover:text-blue-300 transition-colors duration-200">
-            ← Retour
+            ← Back
           </Link>
         </div>
       </div>
     );
   }
 
-  const live = isLive(session.startTime, session.endTime);
+ 
+  const live = isLive(session.startTime, session.endTime, session.date);
 
   return (
     <div className="min-h-[calc(100vh-80px)] bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 px-4 py-8">
@@ -57,7 +58,7 @@ export default async function SessionPage({ params }) {
           </Link>
           <div className="mt-4 flex items-center gap-3">
             <h1 className="text-3xl font-bold text-white">{session.title}</h1>
-            <LiveIndicator isLive={live} />
+            <LiveIndicator isLive={live} /> 
           </div>
           <p className="mt-1 text-sm text-blue-200/70">
             {session.startTime} — {session.endTime}
@@ -75,7 +76,7 @@ export default async function SessionPage({ params }) {
         {live ? (
           <div className="rounded-xl border border-blue-800/30 bg-slate-800/50 backdrop-blur-sm p-6 shadow-xl shadow-blue-900/20">
             <h2 className="mb-4 text-lg font-bold text-white">Live questions</h2>
-            <QuestionSection />
+            <QuestionSection sessionId={id} />
           </div>
         ) : (
           <div className="rounded-xl border border-blue-800/30 bg-slate-800/30 backdrop-blur-sm p-6 text-center shadow-xl shadow-blue-900/20">
