@@ -32,6 +32,18 @@ public class SessionController {
         }
     }
 
+    @GetMapping("/favorites/list")
+    public ResponseEntity<?> getFavorites(
+            @RequestHeader("X-Visitor-Id") String visitorId
+    ) {
+        try {
+            List<Session> sessions = sessionService.getFavoriteSessions(visitorId);
+            return ResponseEntity.ok(sessions);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getSessionById(@PathVariable UUID id) {
         try {
@@ -89,6 +101,34 @@ public class SessionController {
             return ResponseEntity.ok(Map.of("success", true));
         } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @PutMapping("/{id}/favorite")
+    public ResponseEntity<?> toggleFavorite(
+            @PathVariable UUID id,
+            @RequestHeader("X-Visitor-Id") String visitorId
+    ) {
+        try {
+            boolean favorited = sessionService.toggleFavorite(id, visitorId);
+            return ResponseEntity.ok(Map.of("favorited", favorited));
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/{id}/favorite")
+    public ResponseEntity<?> getFavoriteStatus(
+            @PathVariable UUID id,
+            @RequestHeader("X-Visitor-Id") String visitorId
+    ) {
+        try {
+            boolean favorited = sessionService.getFavoriteStatus(id, visitorId);
+            return ResponseEntity.ok(Map.of("favorited", favorited));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
         }

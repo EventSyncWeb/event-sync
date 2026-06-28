@@ -78,4 +78,21 @@ public class SessionService {
         sessionRepository.deleteSessionById(id);
     }
 
+    public List<Session> getFavoriteSessions(String visitorId) {
+        List<Session> sessions = sessionRepository.findFavoriteSessions(visitorId);
+        sessions.forEach(s -> s.setOnLive(isOnLive(s)));
+        return sessions;
+    }
+
+    public boolean toggleFavorite(UUID sessionId, String visitorId) {
+        if (!sessionRepository.existsSessionById(sessionId)) {
+            throw new NotFoundException("Session with id " + sessionId + " not found");
+        }
+        return sessionRepository.toggleFavorite(sessionId, visitorId);
+    }
+
+    public boolean getFavoriteStatus(UUID sessionId, String visitorId) {
+        return sessionRepository.isFavorited(sessionId, visitorId);
+    }
+
 }
