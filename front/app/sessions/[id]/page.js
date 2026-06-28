@@ -6,7 +6,7 @@ import QuestionSection from "@/components/question/questionSection";
 
 async function getSession(id) {
   const base = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-  const res = await fetch(`${base}/api/session/${id}`, { cache: "no-store" });
+  const res = await fetch(`${base}/api/sessions/${id}`, { cache: "no-store" });
   if (!res.ok) throw new Error("Session introuvable");
   return res.json();
 }
@@ -33,13 +33,14 @@ export default async function SessionPage({ params }) {
         <div className="mx-auto max-w-3xl">
           <p className="rounded-lg bg-red-500/10 border border-red-500/20 p-4 text-red-400">Session not found.</p>
           <Link href="/events" className="mt-4 inline-block text-blue-400 hover:text-blue-300 transition-colors duration-200">
-            ← Retour
+            ← Back
           </Link>
         </div>
       </div>
     );
   }
 
+ 
   const live = isLive(session.startTime, session.endTime);
 
   return (
@@ -57,7 +58,7 @@ export default async function SessionPage({ params }) {
           </Link>
           <div className="mt-4 flex items-center gap-3">
             <h1 className="text-3xl font-bold text-white">{session.title}</h1>
-            <LiveIndicator isLive={live} />
+            <LiveIndicator isLive={live} /> 
           </div>
           <p className="mt-1 text-sm text-blue-200/70">
             {session.startTime} — {session.endTime}

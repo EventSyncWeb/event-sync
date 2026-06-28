@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { isLive } from "@/lib/utils";
+import { formatDate, isLive } from "@/lib/utils";
 import LiveIndicator from "./LiveIndicator";
 
 export default function SessionCard({ session, speakers = [] }) {
@@ -15,7 +15,7 @@ export default function SessionCard({ session, speakers = [] }) {
             <LiveIndicator isLive={live} />
           </div>
           <p className="mt-0.5 text-sm text-blue-200/70">
-            {session.startTime} — {session.endTime}
+            {formatDate(session.date)} - {session.startTime} — {session.endTime}
             {session.roomName && ` - ${session.roomName}`}
           </p>
           <p className="mt-1 text-sm text-blue-300/60 line-clamp-2">

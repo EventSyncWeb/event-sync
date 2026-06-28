@@ -2,6 +2,7 @@ package com.choom.back.validator;
 
 import com.choom.back.entity.Event;
 import com.choom.back.entity.Session;
+import com.choom.back.entity.Speaker;
 import com.choom.back.exception.BadRequestException;
 import com.choom.back.repository.EventRepository;
 import com.choom.back.repository.SessionRepository;
@@ -53,7 +54,7 @@ public class SessionValidator {
         }
 
         if (session.getRoom() != null && session.getStartTime() != null && session.getEndTime() != null) {
-            if (sessionRepository.existsConflictingSession(session.getRoom(), session.getStartTime(), session.getEndTime(), null)) {
+            if (sessionRepository.existsConflictingSession(session.getRoom(), session.getDate(), session.getStartTime(), session.getEndTime(), null)) {
                 message += "A session already exists in this room during the specified time";
             }
         }
@@ -63,6 +64,18 @@ public class SessionValidator {
             if (event != null) {
                 if (session.getDate().isBefore(event.getStartDate()) || session.getDate().isAfter(event.getEndDate())) {
                     message += "Session time must be within the event date range";
+                }
+            }
+        }
+
+        if (session.getSpeakers() == null || session.getSpeakers().isEmpty()) {
+            message += "At least one speaker is required";
+        }
+
+        if (session.getSpeakers() != null && session.getDate() != null && session.getStartTime() != null && session.getEndTime() != null) {
+            for (Speaker speaker : session.getSpeakers()) {
+                if (speaker.getId() != null && sessionRepository.existsSpeakerTimeConflict(speaker.getId(), session.getDate(), session.getStartTime(), session.getEndTime(), null)) {
+                    message += "Speaker " + speaker.getFirstName() + " " + speaker.getLastName() + " is already assigned to another session at this time";
                 }
             }
         }
@@ -123,7 +136,7 @@ public class SessionValidator {
         }
 
         if (session.getRoom() != null && session.getStartTime() != null && session.getEndTime() != null) {
-            if (sessionRepository.existsConflictingSession(session.getRoom(), session.getStartTime(), session.getEndTime(), id)) {
+            if (sessionRepository.existsConflictingSession(session.getRoom(), session.getDate(), session.getStartTime(), session.getEndTime(), id)) {
                 message += "A session already exists in this room during the specified time";
             }
         }
@@ -133,6 +146,18 @@ public class SessionValidator {
             if (event != null) {
                 if (session.getDate().isBefore(event.getStartDate()) || session.getDate().isAfter(event.getEndDate())) {
                     message += "Session time must be within the event date range";
+                }
+            }
+        }
+
+        if (session.getSpeakers() == null || session.getSpeakers().isEmpty()) {
+            message += "At least one speaker is required";
+        }
+
+        if (session.getSpeakers() != null && session.getDate() != null && session.getStartTime() != null && session.getEndTime() != null) {
+            for (Speaker speaker : session.getSpeakers()) {
+                if (speaker.getId() != null && sessionRepository.existsSpeakerTimeConflict(speaker.getId(), session.getDate(), session.getStartTime(), session.getEndTime(), id)) {
+                    message += "Speaker " + speaker.getFirstName() + " " + speaker.getLastName() + " is already assigned to another session at this time";
                 }
             }
         }

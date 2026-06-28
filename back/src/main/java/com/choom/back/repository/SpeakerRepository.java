@@ -1,6 +1,7 @@
 package com.choom.back.repository;
 
 import com.choom.back.config.DBConfig;
+import com.choom.back.entity.Session;
 import com.choom.back.entity.Speaker;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -10,7 +11,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Repository
@@ -19,30 +22,28 @@ public class SpeakerRepository {
     private DBConfig dbConfig;
 
     public List<Speaker> findAllSpeaker() {
-        List<Speaker> speakers = new ArrayList<>();
+        Map<UUID, Speaker> speakerMap = new LinkedHashMap<>();
         String query = """
             SELECT s.id, s.first_name, s.last_name, s.description, s.linkedIn, s.company, s.email,
                    ss.session_id, sess.title AS session_title
             FROM speaker s
             LEFT JOIN session_speakers ss ON s.id = ss.speaker_id
             LEFT JOIN session sess ON ss.session_id = sess.id
-            ORDER BY s.id; 
+            ORDER BY s.id
         """;
 
         try (Connection con = dbConfig.getConnection();
              PreparedStatement stmt = con.prepareStatement(query)) {
             ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                speakers.add(mapSpeaker(rs));
-            }
+            aggregateSpeakers(rs, speakerMap);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return speakers;
+        return new ArrayList<>(speakerMap.values());
     }
 
     public List<Speaker> findSpeakersByName(String query) {
-        List<Speaker> speakers = new ArrayList<>();
+        Map<UUID, Speaker> speakerMap = new LinkedHashMap<>();
         String sql = """
                 SELECT s.id, s.first_name, s.last_name, s.description, s.linkedIn, s.company, s.email,
                        ss.session_id, sess.title AS session_title
@@ -50,82 +51,90 @@ public class SpeakerRepository {
                 LEFT JOIN session_speakers ss ON s.id = ss.speaker_id
                 LEFT JOIN session sess ON ss.session_id = sess.id
                 WHERE s.first_name ILIKE ? OR s.last_name ILIKE ?
-                ORDER BY s.id;
+                ORDER BY s.id
         """;
         try (Connection con = dbConfig.getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
             stmt.setString(1, "%" + query + "%");
             stmt.setString(2, "%" + query + "%");
             ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                speakers.add(mapSpeaker(rs));
-            }
+            aggregateSpeakers(rs, speakerMap);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return speakers;
+        return new ArrayList<>(speakerMap.values());
     }
 
     public Speaker findSpeakerById(UUID id) {
+        Map<UUID, Speaker> speakerMap = new LinkedHashMap<>();
         String query = """
                 SELECT s.id, s.first_name, s.last_name, s.description, s.linkedIn, s.company, s.email,
                        ss.session_id, sess.title AS session_title
                 FROM speaker s
                 LEFT JOIN session_speakers ss ON s.id = ss.speaker_id
                 LEFT JOIN session sess ON ss.session_id = sess.id
-                WHERE s.id = ?;
+                WHERE s.id = ?
                 """;
 
         try(Connection con = dbConfig.getConnection();
         PreparedStatement stmt = con.prepareStatement(query)) {
             stmt.setObject(1, id);
             ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return mapSpeaker(rs);
-            }
-
+            aggregateSpeakers(rs, speakerMap);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return null;
+        return speakerMap.isEmpty() ? null : speakerMap.values().iterator().next();
     }
 
     public List<Speaker> findSpeakersBySessionId(UUID sessionId) {
-        List<Speaker> speakers = new ArrayList<>();
+        Map<UUID, Speaker> speakerMap = new LinkedHashMap<>();
         String query = """
                 SELECT s.id, s.first_name, s.last_name, s.description, s.linkedIn, s.company, s.email,
-                       ss.session_id, sess.title AS session_title
+                       ss_all.session_id, sess_all.title AS session_title
                 FROM speaker s
-                JOIN session_speakers ss ON s.id = ss.speaker_id
-                LEFT JOIN session sess ON ss.session_id = sess.id
-                WHERE ss.session_id = ?
+                JOIN session_speakers ss_filter ON s.id = ss_filter.speaker_id AND ss_filter.session_id = ?
+                LEFT JOIN session_speakers ss_all ON s.id = ss_all.speaker_id
+                LEFT JOIN session sess_all ON ss_all.session_id = sess_all.id
                 """;
 
         try(Connection connection = dbConfig.getConnection();
         PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setObject(1, sessionId);
             ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                speakers.add(mapSpeaker(rs));
-            }
+            aggregateSpeakers(rs, speakerMap);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return speakers;
+        return new ArrayList<>(speakerMap.values());
     }
 
-    private Speaker mapSpeaker(ResultSet rs) throws SQLException {
-        Speaker speaker = new Speaker();
-        speaker.setId(UUID.fromString(rs.getString("id")));
-        speaker.setFirstName(rs.getString("first_name"));
-        speaker.setLastName(rs.getString("last_name"));
-        speaker.setBiography(rs.getString("description"));
-        speaker.setLinkedIn(rs.getString("linkedIn"));
-        speaker.setCompany(rs.getString("company"));
-        speaker.setEmail(rs.getString("email"));
-        speaker.setSessionId(rs.getObject("session_id") != null ? (UUID) rs.getObject("session_id") : null);
-        speaker.setSessionTitle(rs.getString("session_title"));
-        return speaker;
+    private void aggregateSpeakers(ResultSet rs, Map<UUID, Speaker> speakerMap) throws SQLException {
+        while (rs.next()) {
+            UUID id = UUID.fromString(rs.getString("id"));
+            Speaker speaker = speakerMap.get(id);
+            if (speaker == null) {
+                speaker = new Speaker();
+                speaker.setId(id);
+                speaker.setFirstName(rs.getString("first_name"));
+                speaker.setLastName(rs.getString("last_name"));
+                speaker.setBiography(rs.getString("description"));
+                speaker.setLinkedIn(rs.getString("linkedIn"));
+                speaker.setCompany(rs.getString("company"));
+                speaker.setEmail(rs.getString("email"));
+                speakerMap.put(id, speaker);
+            }
+            UUID sessionId = rs.getObject("session_id") != null ? (UUID) rs.getObject("session_id") : null;
+            if (sessionId != null) {
+                String title = rs.getString("session_title");
+                if (speaker.getSessions().stream().noneMatch(s -> s.getId().equals(sessionId))) {
+                    Session s = new Session();
+                    s.setId(sessionId);
+                    s.setTitle(title);
+                    speaker.getSessions().add(s);
+                }
+            }
+        }
     }
 
     public Speaker saveSpeaker(Speaker speaker) {
@@ -146,19 +155,27 @@ public class SpeakerRepository {
                 stmt.executeUpdate();
             }
 
-            if (speaker.getSessionId() != null) {
-                String linkQuery = "INSERT INTO session_speakers (session_id, speaker_id) VALUES (?, ?)";
-                try (PreparedStatement linkStmt = connection.prepareStatement(linkQuery)) {
-                    linkStmt.setObject(1, speaker.getSessionId());
-                    linkStmt.setObject(2, speaker.getId());
-                    linkStmt.executeUpdate();
-                }
-            }
+            saveSpeakerSessions(connection, speaker.getId(), speaker.getSessions());
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return speaker;
+    }
+
+    void saveSpeakerSessions(Connection connection, UUID speakerId, List<Session> sessions) {
+        if (sessions == null || sessions.isEmpty()) return;
+        String linkQuery = "INSERT INTO session_speakers (session_id, speaker_id) VALUES (?, ?)";
+        try (PreparedStatement linkStmt = connection.prepareStatement(linkQuery)) {
+            for (Session session : sessions) {
+                linkStmt.setObject(1, session.getId());
+                linkStmt.setObject(2, speakerId);
+                linkStmt.addBatch();
+            }
+            linkStmt.executeBatch();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
