@@ -28,7 +28,7 @@ function QuestionsView({ promise, onUpvote }) {
   );
 }
 
-export default function QuestionSection({ sessionId }) {
+export default function QuestionSection({ sessionId, live }) {
   const [promise, setPromise] = useState(() => getQuestionsBySessionId(sessionId));
 
   const handleRefresh = useCallback(() => {
@@ -45,6 +45,11 @@ export default function QuestionSection({ sessionId }) {
 
   return (
     <section className="max-w-2xl mx-auto px-4 py-10 w-200">
+      {live && (
+        <div className="rounded-2xl border border-blue-800/30 bg-slate-800/50 backdrop-blur-sm p-6 mb-6 shadow-xl shadow-blue-900/20">
+          <QuestionForm sessionId={sessionId} onQuestionAdded={handleQuestionAdded} />
+        </div>
+      )}
       <div className="rounded-2xl border border-blue-800/30 bg-slate-800/50 backdrop-blur-sm p-6 mb-6 shadow-xl shadow-blue-900/20">
         <QuestionForm sessionId={sessionId} onQuestionAdded={handleQuestionAdded} />
       </div>

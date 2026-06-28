@@ -1,7 +1,5 @@
 import { getToken } from "@/lib/auth";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-
 async function handleResponse(res) {
   if (!res.ok) {
     const errorText = await res.text();
@@ -15,7 +13,7 @@ async function handleResponse(res) {
 }
 
 export function buildUrl(path) {
-  return `${BASE_URL}${path}`;
+  return path;
 }
 
 export function authHeaders() {
@@ -27,10 +25,10 @@ export function authHeaders() {
   return headers;
 }
 
-export async function apiGet(path) {
+export async function apiGet(path, extraHeaders = {}) {
   const res = await fetch(buildUrl(path), {
     method: "GET",
-    headers: authHeaders(),
+    headers: { ...authHeaders(), ...extraHeaders },
     cache: "no-store",
   });
   return handleResponse(res);
@@ -45,11 +43,11 @@ export async function apiPost(path, body) {
   return handleResponse(res);
 }
 
-export async function apiPut(path, body) {
+export async function apiPut(path, body, extraHeaders = {}) {
   const res = await fetch(buildUrl(path), {
     method: "PUT",
-    headers: authHeaders(),
-    body: JSON.stringify(body),
+    headers: { ...authHeaders(), ...extraHeaders },
+    body: body ? JSON.stringify(body) : undefined,
   });
   return handleResponse(res);
 }

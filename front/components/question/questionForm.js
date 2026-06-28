@@ -36,7 +36,7 @@ export default function QuestionForm({ sessionId, onQuestionAdded }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-2">
       <div>
         <h2 className="text-2xl font-bold text-white text-slate-900">Questions</h2>
       </div>
@@ -109,5 +109,6 @@ export default function QuestionForm({ sessionId, onQuestionAdded }) {
         )}
       </button>
     </form>
+
   );
 }

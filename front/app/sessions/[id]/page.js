@@ -73,16 +73,10 @@ export default async function SessionPage({ params }) {
           </div>
         )}
 
-        {live ? (
-          <div className="rounded-xl border border-blue-800/30 bg-slate-800/50 backdrop-blur-sm p-6 shadow-xl shadow-blue-900/20">
-            <h2 className="mb-4 text-lg font-bold text-white">Live questions</h2>
-            <QuestionSection sessionId={id} />
-          </div>
-        ) : (
-          <div className="rounded-xl border border-blue-800/30 bg-slate-800/30 backdrop-blur-sm p-6 text-center shadow-xl shadow-blue-900/20">
-            <p className="text-blue-300/50">Questions will be available when the session is live.</p>
-          </div>
-        )}
+        <div className="rounded-xl border border-blue-800/30 bg-slate-800/50 backdrop-blur-sm p-6 shadow-xl shadow-blue-900/20">
+          <h2 className="mb-4 text-lg font-bold text-white">Questions</h2>
+          <QuestionSection sessionId={id} live={live} />
+        </div>
       </div>
     </div>
   );
