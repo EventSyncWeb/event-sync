@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -19,47 +18,31 @@ public class SpeakerController {
     private final SpeakerService speakerService;
 
     @GetMapping
-    public ResponseEntity<?> getAllSpeakers(@RequestParam(required = false) String q) {
-        try {
-            List<Speaker> speakers = speakerService.getAllSpeakers(q);
-            return ResponseEntity.ok()
-                    .header("Content-Range", "speakers 0-10/50" + speakers.size() + "/" + speakers.size())
-                    .body(speakers);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
-        }
+    public ResponseEntity<List<Speaker>> getAllSpeakers(@RequestParam(required = false) String q) {
+        List<Speaker> speakers = speakerService.getAllSpeakers(q);
+        return ResponseEntity.ok()
+                .header("Content-Range", "speakers 0-" + speakers.size() + "/" + speakers.size())
+                .body(speakers);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getSpeakerById(@PathVariable UUID id) {
-        try {
-            Speaker speaker = speakerService.getSpeakerById(id);
-            if (speaker == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Speaker not found"));
-            }
-            return ResponseEntity.ok(speaker);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
+    public ResponseEntity<Speaker> getSpeakerById(@PathVariable UUID id) {
+        Speaker speaker = speakerService.getSpeakerById(id);
+        if (speaker == null) {
+            return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.ok(speaker);
     }
 
     @GetMapping("/session/{sessionId}")
-    public ResponseEntity<?> getSpeakersBySessionId(@PathVariable UUID sessionId) {
-        try {
-            List<Speaker> speakers = speakerService.getSpeakersBySessionId(sessionId);
-            return ResponseEntity.ok(speakers);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
-        }
+    public ResponseEntity<List<Speaker>> getSpeakersBySessionId(@PathVariable UUID sessionId) {
+        List<Speaker> speakers = speakerService.getSpeakersBySessionId(sessionId);
+        return ResponseEntity.ok(speakers);
     }
 
     @PostMapping
-    public ResponseEntity<?> createSpeaker(@RequestBody Speaker speaker) {
-        try {
-            Speaker created = speakerService.createSpeaker(speaker);
-            return ResponseEntity.status(HttpStatus.CREATED).body(created);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
-        }
+    public ResponseEntity<Speaker> createSpeaker(@RequestBody Speaker speaker) {
+        Speaker created = speakerService.createSpeaker(speaker);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 }
