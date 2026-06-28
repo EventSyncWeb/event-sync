@@ -28,6 +28,12 @@ public class QuestionController {
             return ResponseEntity.status(HttpStatus.OK).body(question);
     }
 
+    @GetMapping("/question/session/{sessionId}")
+    public ResponseEntity<List<Question>> getQuestionsBySessionId(@PathVariable UUID sessionId){
+        List<Question> questions = questionServices.getQuestionsBySessionId(sessionId);
+        return ResponseEntity.ok(questions);
+    }
+
     @PostMapping("/question")
     public ResponseEntity<Question> createQuestion(@RequestBody Question question){
         Question created = questionServices.createQuestion(question);
