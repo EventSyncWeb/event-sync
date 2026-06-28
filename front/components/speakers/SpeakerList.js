@@ -5,7 +5,7 @@ export default function SpeakerList({ speakers }) {
 
   return (
     <div>
-      <h2 className="mb-2 text-lg font-semibold">Intervenants</h2>
+      <h2 className="mb-2 text-lg font-semibold text-slate-200">Speakers :</h2>
       <div className="flex flex-wrap gap-3">
         {speakers.map((sp) => (
           <SpeakerCard key={sp.id} speaker={sp} />
