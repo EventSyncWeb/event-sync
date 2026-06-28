@@ -83,8 +83,8 @@ export default function QuestionList({ questions, onUpvote }) {
               className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border transition
                 ${
                   upvotedIds.has(q.id)
-                    ? "border-indigo-400 text-indigo-600 bg-indigo-50"
-                    : "border-slate-200 text-slate-500 hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50"
+                    ? "border-red-400 text-red-500 bg-red-50"
+                    : "border-slate-200 text-slate-500 hover:border-red-400 hover:text-red-500 hover:bg-red-50"
                 }
                 disabled:cursor-not-allowed`}
             >
