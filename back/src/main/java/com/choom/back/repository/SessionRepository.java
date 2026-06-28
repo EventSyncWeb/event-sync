@@ -159,8 +159,8 @@ public class SessionRepository {
             preparedStatement.setObject(4,session.getStartTime());
             preparedStatement.setObject(5, session.getEndTime());
             preparedStatement.setObject(6, session.getRoom());
-            preparedStatement.setObject(8, session.getEventId());
-            preparedStatement.setObject(9, session.getDate());
+            preparedStatement.setObject(7, session.getEventId());
+            preparedStatement.setObject(8, session.getDate());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
