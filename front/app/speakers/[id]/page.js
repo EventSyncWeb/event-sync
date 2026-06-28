@@ -43,9 +43,17 @@ export default async function SpeakerDetailPage({ params }) {
 
         <div className="rounded-xl border border-blue-800/30 bg-slate-800/50 backdrop-blur-sm p-6 shadow-xl shadow-blue-900/20">
           <div className="flex items-center gap-4 mb-6">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-indigo-600/20 text-2xl font-bold text-indigo-400">
-              {speaker.firstName?.[0]}{speaker.lastName?.[0]}
-            </div>
+            {speaker.profilePic ? (
+              <img
+                src={speaker.profilePic}
+                alt={fullName}
+                className="h-16 w-16 rounded-full object-cover border-2 border-indigo-500/50"
+              />
+            ) : (
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-indigo-600/20 text-2xl font-bold text-indigo-400">
+                {speaker.firstName?.[0]}{speaker.lastName?.[0]}
+              </div>
+            )}
             <div>
               <h1 className="text-3xl font-bold text-white">{fullName}</h1>
               {speaker.company && (
