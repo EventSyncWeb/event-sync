@@ -23,7 +23,9 @@ public class RoomController {
     public ResponseEntity<?> getAllRooms() {
         try {
             List<Room> rooms = roomService.getAllRooms();
-            return ResponseEntity.ok(rooms);
+            return ResponseEntity.ok()
+                    .header("Content-Range", "rooms 0-10/50" + rooms.size() + "/" + rooms.size())
+                    .body(rooms);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
         }
