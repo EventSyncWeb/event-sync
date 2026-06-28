@@ -11,11 +11,11 @@ function QuestionsView({ promise, onUpvote }) {
   return (
     <>
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-slate-700">
+        <p className="text-sm font-semibold text-slate-400">
           {questions.length > 0
             ? `${questions.length} question${questions.length > 1 ? "s" : ""}`
             : "Questions"}
-        </h3>
+        </p>
       </div>
       {questions.length === 0 ? (
         <p className="text-center text-slate-400 py-8">
@@ -37,7 +37,7 @@ export default function QuestionSection({ sessionId }) {
 
   const handleQuestionAdded = () => {
     handleRefresh();
-  };
+  }; 
 
   const handleUpvote = (id) => {
     handleRefresh();

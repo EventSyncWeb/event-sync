@@ -36,21 +36,21 @@ export default function QuestionList({ questions, onUpvote }) {
   );
 
   return (
-    <ul className="flex flex-col gap-3">
+    <ul className="flex flex-col gap-3 ">
       {sorted.map((q) => (
         <li
           key={q.id}
-          className="bg-white border border-slate-200 rounded-xl px-5 py-4 flex flex-col gap-2 shadow-sm hover:shadow-md transition-shadow"
+          className="bg-slate-800 border border-blue-800/30 rounded-xl px-5 py-4 flex flex-col gap-2 shadow-sm hover:shadow-md transition-shadow"
         >
           {/* Meta */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 ">
             <span className="text-xs font-semibold text-indigo-600">
               {q.authorName || "Anonymous"}
             </span>
-            {q.createdAt && (
-              <span className="text-xs text-slate-400">
+            {q.creationDate && (
+              <span className="text-xs text-slate-500">
                 ·{" "}
-                {new Date(q.createdAt).toLocaleDateString("fr-FR", {
+                {new Date(q.creationDate).toLocaleDateString("fr-FR", {
                   day: "numeric",
                   month: "short",
                   hour: "2-digit",
@@ -61,7 +61,7 @@ export default function QuestionList({ questions, onUpvote }) {
           </div>
 
           {/* Content */}
-          <p className="text-sm text-slate-700 leading-relaxed">{q.content}</p>
+          <p className="text-sm text-white leading-relaxed">{q.content}</p>
 
           {/* Upvote */}
           <button
