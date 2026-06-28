@@ -79,17 +79,17 @@ export default function QuestionList({ questions, onUpvote }) {
             <button
               onClick={() => handleUpvote(q.id)}
               disabled={upvotedIds.has(q.id) || loadingId === q.id}
-              aria-label="Voter pour cette question"
+              aria-label="vote for this question"
               className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border transition
                 ${
                   upvotedIds.has(q.id)
-                    ? "border-red-400 text-red-500 bg-red-50"
-                    : "border-slate-200 text-slate-500 hover:border-red-400 hover:text-red-500 hover:bg-red-50"
+                    ? "border-indigo-400 text-indigo-600 bg-indigo-50"
+                    : "border-slate-200 text-slate-500 hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50"
                 }
                 disabled:cursor-not-allowed`}
             >
               <span className="text-[10px]">▲</span>
-              <span>{(q.upvoteCount ?? 0) + (upvotedIds.has(q.id) ? 1 : 0)}</span>
+              <span >{(q.upvoteCount ?? 0)}</span>
             </button>
             {errorId === q.id && (
               <span className="text-xs text-red-400">{errorMsg}</span>
