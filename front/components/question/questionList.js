@@ -34,10 +34,10 @@ export default function QuestionList({ questions, onUpvote }) {
 
   if (!questions || questions.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center gap-2 py-12 text-slate-400 text-center">
+      <div className="flex flex-col items-center justify-center gap-2 py-12 text-blue-300/40 text-center">
         <span className="text-4xl">💬</span>
         <p className="text-sm font-medium">No questions yet.</p>
-        <p className="text-xs">Be the first to ask a question !</p>
+        <p className="text-xs">Be the first to ask a question!</p>
       </div>
     );
   }
