@@ -44,6 +44,12 @@ public class QuestionService {
         return questionRepository.createQuestion(question);
     }
 
+    public Question createQuestionForSession(UUID sessionId, Question question){
+        question.setSessionId(sessionId);
+        questionValidator.validateCreate(question);
+        return questionRepository.createQuestion(question);
+    }
+
     public void upvoteQuestion(UUID questionId) {
         questionRepository.upvoteCount(questionId);
     }
