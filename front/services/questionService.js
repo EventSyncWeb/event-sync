@@ -1,4 +1,5 @@
 import { apiGet, apiPost, apiPut } from "./api";
+import { getVisitorId } from "@/lib/visitor";
 
 export async function getAllQuestions() {
   return apiGet("/question");
@@ -6,7 +7,9 @@ export async function getAllQuestions() {
 
 export async function getQuestionsBySessionId(sessionId) {
   try {
-    return await apiGet(`/question/session/${sessionId}`);
+    return await apiGet(`/question/session/${sessionId}`, {
+      "X-Visitor-Id": getVisitorId(),
+    });
   } catch {
     return [];
   }
@@ -25,5 +28,7 @@ export async function createQuestionForSession(sessionId, questionData) {
 }
 
 export async function upvoteQuestion(id) {
-  return apiPut(`/question/${id}/upvote`);
+  return apiPut(`/question/${id}/upvote`, null, {
+    "X-Visitor-Id": getVisitorId(),
+  });
 }

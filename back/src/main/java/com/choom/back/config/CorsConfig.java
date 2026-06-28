@@ -37,5 +37,15 @@ public class CorsConfig implements WebMvcConfigurer {
                 .allowedHeaders("*")
                 .exposedHeaders("Content-Range")
                 .allowCredentials(true);
+
+        registry.addMapping("/question/**")
+                .allowedOrigins(
+                        "http://localhost:3000",
+                        "http://localhost:5173"
+                )
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
+                .exposedHeaders("X-Total-Count")
+                .allowCredentials(true);
     }
 }
