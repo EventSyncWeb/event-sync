@@ -1,19 +1,22 @@
 package com.choom.back.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Data
 public class Speaker {
 
     private UUID id;
-    private UUID sessionId;
-    private String sessionTitle;
     private String firstName;
     private String lastName;
     private String biography;
     private String linkedIn;
     private String company;
     private String email;
+    @JsonIgnoreProperties("speakers")
+    private List<Session> sessions = new ArrayList<>();
 }
