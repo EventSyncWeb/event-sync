@@ -1,7 +1,5 @@
 import { getToken } from "@/lib/auth";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-
 async function handleResponse(res) {
   if (!res.ok) {
     const errorText = await res.text();
@@ -15,7 +13,7 @@ async function handleResponse(res) {
 }
 
 export function buildUrl(path) {
-  return `${BASE_URL}${path}`;
+  return path;
 }
 
 export function authHeaders() {

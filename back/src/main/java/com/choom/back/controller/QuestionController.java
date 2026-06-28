@@ -41,6 +41,15 @@ public class QuestionController {
             return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
+    @PostMapping("/question/session/{sessionId}")
+    public ResponseEntity<Question> createQuestionForSession(
+            @PathVariable UUID sessionId,
+            @RequestBody Question question
+    ){
+        Question created = questionServices.createQuestionForSession(sessionId, question);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
     @PutMapping("/question/{id}/upvote")
     public ResponseEntity<String> upvote(
             @PathVariable UUID id
