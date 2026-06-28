@@ -45,7 +45,7 @@ export default function QuestionList({ questions, onUpvote }) {
           {/* Meta */}
           <div className="flex items-center gap-2">
             <span className="text-xs font-semibold text-indigo-600">
-              {q.author || "Anonymous"}
+              {q.authorName || "Anonymous"}
             </span>
             {q.createdAt && (
               <span className="text-xs text-slate-400">
