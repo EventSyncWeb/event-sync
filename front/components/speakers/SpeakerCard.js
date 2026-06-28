@@ -1,6 +1,11 @@
+import Link from "next/link";
+
 export default function SpeakerCard({ speaker }) {
   return (
-    <div className="rounded-xl border border-blue-800/30 bg-slate-800/50 backdrop-blur-sm px-4 py-3 shadow-lg shadow-blue-900/20 transition-all duration-200 hover:shadow-xl hover:shadow-blue-900/30 hover:border-blue-500/50">
+    <Link
+      href={`/speakers/${speaker.id}`}
+      className="block rounded-xl border border-blue-800/30 bg-slate-800/50 backdrop-blur-sm px-4 py-3 shadow-lg shadow-blue-900/20 transition-all duration-200 hover:shadow-xl hover:shadow-blue-900/30 hover:border-blue-500/50"
+    >
       <p className="font-medium text-white">
         {speaker.firstName} {speaker.lastName}
       </p>
@@ -18,6 +23,6 @@ export default function SpeakerCard({ speaker }) {
           {speaker.biography || speaker.description}
         </p>
       )}
-    </div>
+    </Link>
   );
 }
