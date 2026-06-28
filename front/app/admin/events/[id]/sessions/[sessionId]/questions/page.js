@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getAllQuestions } from "@/services/questionService";
+import { getQuestionsBySessionId } from "@/services/questionService";
 
 export default function SessionQuestionsPage({ params: paramsPromise }) {
   const [params, setParams] = useState(null);
@@ -14,7 +14,7 @@ export default function SessionQuestionsPage({ params: paramsPromise }) {
 
   useEffect(() => {
     if (!params) return;
-    getAllQuestions()
+    getQuestionsBySessionId(params.sessionId)
       .then(setQuestions)
       .catch((e) => setError(e.message));
   }, [params]);

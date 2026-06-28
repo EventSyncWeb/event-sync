@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, use, Suspense } from "react";
-import { getAllQuestions } from "@/services/questionService";
+import { getQuestionsBySessionId } from "@/services/questionService";
 import QuestionForm from "./questionForm";
 import QuestionList from "./questionList";
 
@@ -28,12 +28,12 @@ function QuestionsView({ promise, onUpvote }) {
   );
 }
 
-export default function QuestionSection() {
-  const [promise, setPromise] = useState(() => getAllQuestions());
+export default function QuestionSection({ sessionId }) {
+  const [promise, setPromise] = useState(() => getQuestionsBySessionId(sessionId));
 
   const handleRefresh = useCallback(() => {
-    setPromise(getAllQuestions());
-  }, []);
+    setPromise(getQuestionsBySessionId(sessionId));
+  }, [sessionId]);
 
   const handleQuestionAdded = () => {
     handleRefresh();
@@ -44,9 +44,9 @@ export default function QuestionSection() {
   };
 
   return (
-    <section className="max-w-2xl mx-auto px-4 py-10">
+    <section className="max-w-2xl mx-auto px-4 py-10 w-200">
       <div className="rounded-2xl border border-blue-800/30 bg-slate-800/50 backdrop-blur-sm p-6 mb-6 shadow-xl shadow-blue-900/20">
-        <QuestionForm onQuestionAdded={handleQuestionAdded} />
+        <QuestionForm sessionId={sessionId} onQuestionAdded={handleQuestionAdded} />
       </div>
       <div className="flex items-center justify-between mb-3">
         <button
