@@ -5,16 +5,16 @@ import Link from "next/link";
 import { getEvents } from "@/services/eventService";
 import { getSessionsByEvent } from "@/services/sessionService";
 import { getRooms } from "@/services/roomService";
-import { formatTime, isLive } from "@/lib/utils";
+import { formatDate, formatTime, isLive } from "@/lib/utils";
 
 function groupSessionsByRoomAndTime(sessions) {
   const timeSlots = [];
   const map = {};
 
   for (const s of sessions) {
-    const key = `${s.startTime}|${s.endTime}`;
+    const key = `${s.date}|${s.startTime}|${s.endTime}`;
     if (!map[key]) {
-      map[key] = { startTime: s.startTime, endTime: s.endTime, cells: {} };
+      map[key] = { date: s.date, startTime: s.startTime, endTime: s.endTime, cells: {} };
       timeSlots.push(map[key]);
     }
     const roomId = s.room || s.roomName || "unknown";
@@ -22,7 +22,7 @@ function groupSessionsByRoomAndTime(sessions) {
   }
 
   timeSlots.sort(
-    (a, b) => new Date(a.startTime) - new Date(b.startTime)
+    (a, b) => new Date(`${a.date}T${a.startTime}`) - new Date(`${b.date}T${b.startTime}`)
   );
 
   return timeSlots;
@@ -190,11 +190,14 @@ export default function AdminDashboard() {
               </thead>
               <tbody>
                 {timeSlots.map((slot) => {
+                  const dateLabel = formatDate(slot.date);
                   const startLabel = formatTime(slot.startTime);
                   const endLabel = formatTime(slot.endTime);
                   return (
-                    <tr key={`${slot.startTime}|${slot.endTime}`} className="border-b border-blue-800/20 last:border-0">
+                    <tr key={`${slot.date}|${slot.startTime}|${slot.endTime}`} className="border-b border-blue-800/20 last:border-0">
                       <td className="whitespace-nowrap px-4 py-3 font-medium text-blue-200/80">
+                        <span className="text-xs text-blue-300/50">{dateLabel}</span>
+                        <br />
                         {startLabel} — {endLabel}
                       </td>
                       {rooms.map((r) => {
@@ -212,7 +215,7 @@ export default function AdminDashboard() {
                         const sid = session.sessionId || session.id;
                         const cellKey = `${session.startTime}|${session.endTime}|${r.id}`;
                         const speakers = speakersBySession[cellKey] || [];
-                        const live = isLive(session.startTime, session.endTime);
+                        const live = isLive(session.startTime, session.endTime, session.date);
 
                         return (
                           <td key={r.id} className="px-4 py-3">
