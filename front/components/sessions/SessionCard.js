@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { formatDate, isLive } from "@/lib/utils";
 import LiveIndicator from "./LiveIndicator";
+import FavoriteButton from "./FavoriteButton";
 
 export default function SessionCard({ session, speakers = [] }) {
   const id = session.sessionId || session.id;
@@ -13,6 +14,7 @@ export default function SessionCard({ session, speakers = [] }) {
           <div className="flex items-center gap-2">
             <h3 className="text-lg font-semibold text-white">{session.title}</h3>
             <LiveIndicator isLive={live} />
+            <FavoriteButton sessionId={id} />
           </div>
           <p className="mt-0.5 text-sm text-blue-200/70">
             {formatDate(session.date)} - {session.startTime} — {session.endTime}

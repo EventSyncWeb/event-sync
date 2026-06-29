@@ -3,6 +3,7 @@ import { isLive } from "@/lib/utils";
 import LiveIndicator from "@/components/sessions/LiveIndicator";
 import SpeakerList from "@/components/speakers/SpeakerList";
 import QuestionSection from "@/components/question/questionSection";
+import FavoriteButton from "@/components/sessions/FavoriteButton";
 
 async function getSession(id) {
   const base = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
@@ -58,7 +59,8 @@ export default async function SessionPage({ params }) {
           </Link>
           <div className="mt-4 flex items-center gap-3">
             <h1 className="text-3xl font-bold text-white">{session.title}</h1>
-            <LiveIndicator isLive={live} /> 
+            <LiveIndicator isLive={live} />
+            <FavoriteButton sessionId={id} />
           </div>
           <p className="mt-1 text-sm text-blue-200/70">
             {session.startTime} — {session.endTime}
