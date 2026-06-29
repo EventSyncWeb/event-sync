@@ -2,7 +2,6 @@ package com.choom.back.controller;
 
 import com.choom.back.dto.LoginRequest;
 import com.choom.back.dto.RegisterRequest;
-import com.choom.back.entity.Admin;
 import com.choom.back.exception.AuthenticationException;
 import com.choom.back.exception.BadRequestException;
 import com.choom.back.service.AuthService;
@@ -26,8 +25,7 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try {
             authValidator.validateCredentials(loginRequest.getEmail(),  loginRequest.getPassword());
-            Admin admin = authService.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
-            return ResponseEntity.status(HttpStatus.OK).body(admin);
+            return ResponseEntity.status(HttpStatus.OK).body(authService.authenticate(loginRequest.getEmail(), loginRequest.getPassword()));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         } catch (AuthenticationException e) {
@@ -46,8 +44,7 @@ public class AuthController {
                     registerRequest.getEmail(),
                     registerRequest.getPassword()
             );
-            Admin admin = authService.register(registerRequest);
-            return ResponseEntity.status(HttpStatus.CREATED).body(admin);
+            return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(registerRequest));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         } catch (RuntimeException e) {
