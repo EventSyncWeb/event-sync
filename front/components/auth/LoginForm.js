@@ -19,7 +19,7 @@ export default function LoginForm() {
     try {
       await login(email, password);
       router.push("/admin");
-      window.location.href = "http://localhost:5173/";
+      window.location.href = "http://localhost:5173/#/";
     } catch (err) {
       setError(err.message || "Invalid identifiers");
     } finally {
