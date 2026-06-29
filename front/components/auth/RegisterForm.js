@@ -21,7 +21,7 @@ export default function RegisterForm() {
     try {
       await apiRegister(firstName, lastName, email, password);
       setSuccess(true);
-      setTimeout(() => router.push("/login"), 2000);
+      setTimeout(() => router.push("http://localhost:5173/#/login"), 2000);
     } catch (err) {
       setError(err.message || "Registration failed");
     } finally {
@@ -130,7 +130,7 @@ export default function RegisterForm() {
         </button>
 
         <p className="text-center text-xs text-blue-300/40">
-          <a href="/login" className="text-blue-400 hover:text-blue-300 transition-colors">
+          <a href="http://localhost:5173/#/login" className="text-blue-400 hover:text-blue-300 transition-colors">
             Already have an account? Log in
           </a>
         </p>
