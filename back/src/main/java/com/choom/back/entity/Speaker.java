@@ -1,5 +1,6 @@
 package com.choom.back.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
@@ -17,7 +18,6 @@ public class Speaker {
     private String linkedIn;
     private String company;
     private String email;
-    private String profilePic;
-    @JsonIgnoreProperties("speakers")
+    @JsonIgnore
     private List<Session> sessions = new ArrayList<>();
 }

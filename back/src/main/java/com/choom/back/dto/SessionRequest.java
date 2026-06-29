@@ -1,16 +1,16 @@
-package com.choom.back.entity;
+package com.choom.back.dto;
 
+import com.choom.back.entity.Question;
+import com.choom.back.entity.Speaker;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Data
-public class Session {
+public class SessionRequest {
     private UUID eventId;
     private UUID id;
     private String title;
@@ -20,7 +20,6 @@ public class Session {
     private LocalTime endTime;
     private UUID room;
     private String roomName;
-    private List<Question> questions;
-    private List<Speaker> speakers = new ArrayList<>();
+    private List<UUID> speakersIds;
     private boolean isOnLive;
 }

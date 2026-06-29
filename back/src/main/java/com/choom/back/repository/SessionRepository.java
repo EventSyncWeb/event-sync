@@ -178,7 +178,7 @@ public class SessionRepository {
     public Session updateSession(Session session) {
         String query = """
                 UPDATE session
-                SET title = ?, description = ?, date = ?, start_time = ?, end_time = ?, room_id = ?, capacity = ?, event_id = ?
+                SET title = ?, description = ?, date = ?, start_time = ?, end_time = ?, room_id = ?, event_id = ?
                 WHERE id = ?
         """;
         try(Connection connection = dbConfig.getConnection();
@@ -189,21 +189,16 @@ public class SessionRepository {
             preparedStatement.setObject(4, session.getStartTime());
             preparedStatement.setObject(5, session.getEndTime());
             preparedStatement.setObject(6, session.getRoom());
-            preparedStatement.setObject(8, session.getEventId());
-            preparedStatement.setObject(9, session.getId());
+            preparedStatement.setObject(7, session.getEventId());
+            preparedStatement.setObject(8, session.getId());
 
             preparedStatement.executeUpdate();
         }catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-        deleteSessionSpeakers(session.getId());
-        if (session.getSpeakers() != null && !session.getSpeakers().isEmpty()) {
-            saveSessionSpeakers(session.getId(), session.getSpeakers());
-        }
-
+        updateSessionSpeakers(session.getId(),
+                session.getSpeakers() != null ? session.getSpeakers() : new ArrayList<>());
         return session;
-
     }
 
     public void deleteSessionById(UUID id) {
@@ -386,6 +381,33 @@ public class SessionRepository {
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void updateSessionSpeakers(UUID sessionId, List<Speaker> speakers) {
+        String deleteQuery = "DELETE FROM session_speakers WHERE session_id = ?";
+        String insertQuery = "INSERT INTO session_speakers (session_id, speaker_id) VALUES (?, ?)";
+        try (Connection connection = dbConfig.getConnection();
+        PreparedStatement deleteStmt = connection.prepareStatement(deleteQuery);
+        PreparedStatement insertStmt = connection.prepareStatement(insertQuery)) {
+            connection.setAutoCommit(false);
+            try {
+                deleteStmt.setObject(1, sessionId);
+                deleteStmt.executeUpdate();
+
+                for (Speaker speaker : speakers) {
+                    insertStmt.setObject(1,sessionId);
+                    insertStmt.setObject(2,speaker.getId());
+                    insertStmt.addBatch();
+                }
+                insertStmt.executeBatch();
+                connection.commit();
+            } catch (SQLException e) {
+                connection.rollback();
+                throw new RuntimeException(e);
+            }
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
         }
     }
 

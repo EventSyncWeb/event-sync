@@ -1,5 +1,6 @@
 package com.choom.back.controller;
 
+import com.choom.back.dto.SessionRequest;
 import com.choom.back.entity.Session;
 import com.choom.back.exception.AuthenticationException;
 import com.choom.back.exception.BadRequestException;
@@ -69,7 +70,7 @@ public class SessionController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createSession(@RequestBody Session session) {
+    public ResponseEntity<?> createSession(@RequestBody SessionRequest session) {
         try {
             Session createdSession = sessionService.createSession(session);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdSession);
@@ -81,7 +82,7 @@ public class SessionController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateSession(@PathVariable UUID id, @RequestBody Session session) {
+    public ResponseEntity<?> updateSession(@PathVariable UUID id, @RequestBody SessionRequest session) {
         try {
             Session updatedSession = sessionService.updateSession(id, session);
             return ResponseEntity.status(HttpStatus.OK).body(updatedSession);

@@ -1,6 +1,8 @@
 package com.choom.back.service;
 
+import com.choom.back.dto.SessionRequest;
 import com.choom.back.entity.Session;
+import com.choom.back.entity.Speaker;
 import com.choom.back.exception.BadRequestException;
 import com.choom.back.exception.NotFoundException;
 import com.choom.back.repository.SessionRepository;
@@ -51,7 +53,21 @@ public class SessionService {
         return sessions;
     }
 
-    public Session createSession(Session session){
+    public Session createSession(SessionRequest sessionRequest){
+        Session session = new Session();
+        session.setEventId(sessionRequest.getEventId());
+        session.setTitle(sessionRequest.getTitle());
+        session.setDescription(sessionRequest.getDescription());
+        session.setDate(sessionRequest.getDate());
+        session.setStartTime(sessionRequest.getStartTime());
+        session.setEndTime(sessionRequest.getEndTime());
+        session.setRoom(sessionRequest.getRoom());
+        session.setRoomName(sessionRequest.getRoomName());
+        for(UUID speakerId : sessionRequest.getSpeakersIds()) {
+            Speaker speaker = new Speaker();
+            speaker.setId(speakerId);
+            session.getSpeakers().add(speaker);
+        }
         sessionValidator.validate(session);
 
         Session created = sessionRepository.createSession(session);
@@ -61,7 +77,21 @@ public class SessionService {
         return created;
     }
 
-    public Session updateSession(UUID id, Session session){
+    public Session updateSession(UUID id, SessionRequest sessionRequest){
+        Session session = new Session();
+        session.setEventId(sessionRequest.getEventId());
+        session.setTitle(sessionRequest.getTitle());
+        session.setDescription(sessionRequest.getDescription());
+        session.setDate(sessionRequest.getDate());
+        session.setStartTime(sessionRequest.getStartTime());
+        session.setEndTime(sessionRequest.getEndTime());
+        session.setRoom(sessionRequest.getRoom());
+        session.setRoomName(sessionRequest.getRoomName());
+        for(UUID speakerId : sessionRequest.getSpeakersIds()) {
+            Speaker speaker = new Speaker();
+            speaker.setId(speakerId);
+            session.getSpeakers().add(speaker);
+        }
         sessionValidator.UpdateValidate(id, session);
         session.setId(id);
 
