@@ -19,7 +19,7 @@ function QuestionsView({ promise, onUpvote }) {
       </div>
       {questions.length === 0 ? (
         <p className="text-center text-blue-300/40 py-8">
-          Be the first to ask a question!
+          No question ...
         </p>
       ) : (
         <QuestionList questions={questions} onUpvote={onUpvote} />

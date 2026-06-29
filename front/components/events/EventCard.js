@@ -10,7 +10,7 @@ export default function EventCard({ event }) {
     >
       <h2 className="text-lg font-semibold text-white">{event.title}</h2>
       <p className="mt-1 text-sm text-blue-200/70">{event.location}</p>
-      <p className="mt-0.5 text-xs text-blue-300/40">
+      <p className="mt-1 text-xs text-blue-100/70">
         {formatDate(event.startDate)} — {formatDate(event.endDate)}
       </p>
     </Link>
