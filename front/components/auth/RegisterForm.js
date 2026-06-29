@@ -2,14 +2,16 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useAuth } from "@/context/AuthContext";
+import { register as apiRegister } from "@/services/authService";
 
-export default function LoginForm() {
-  const { login } = useAuth();
+export default function RegisterForm() {
   const router = useRouter();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e) {
@@ -17,13 +19,30 @@ export default function LoginForm() {
     setError("");
     setLoading(true);
     try {
-      await login(email, password);
-      router.push("/admin");
+      await apiRegister(firstName, lastName, email, password);
+      setSuccess(true);
+      setTimeout(() => router.push("http://localhost:5173/#/login"), 2000);
     } catch (err) {
-      setError(err.message || "Invalid identifiers");
+      setError(err.message || "Registration failed");
     } finally {
       setLoading(false);
     }
+  }
+
+  if (success) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 p-4">
+        <div className="w-full max-w-md text-center space-y-4 bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-green-800/30 shadow-xl shadow-green-900/20 p-8">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-green-600 shadow-lg shadow-green-600/20 mb-2">
+            <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-bold text-white">Admin created!</h1>
+          <p className="text-sm text-green-200/60">Redirecting to login...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -32,14 +51,14 @@ export default function LoginForm() {
         <div className="text-center space-y-2">
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600 shadow-lg shadow-blue-600/20 mb-2">
             <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
             </svg>
           </div>
           <h1 className="text-2xl font-bold text-white">
-            Login Admin
+            Create Admin
           </h1>
           <p className="text-sm text-blue-200/60">
-            Access your secure space
+            Register the first administrator
           </p>
         </div>
 
@@ -53,6 +72,30 @@ export default function LoginForm() {
         )}
 
         <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-blue-200/80">First name</label>
+              <input
+                type="text"
+                required
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                className="w-full rounded-lg border-0 bg-slate-900/50 px-4 py-3 text-sm text-white placeholder:text-blue-300/30 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-200"
+                placeholder="John"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-blue-200/80">Last name</label>
+              <input
+                type="text"
+                required
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                className="w-full rounded-lg border-0 bg-slate-900/50 px-4 py-3 text-sm text-white placeholder:text-blue-300/30 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-200"
+                placeholder="Doe"
+              />
+            </div>
+          </div>
           <div className="space-y-1.5">
             <label className="block text-sm font-medium text-blue-200/80">Email</label>
             <input
@@ -69,6 +112,7 @@ export default function LoginForm() {
             <input
               type="password"
               required
+              minLength={6}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full rounded-lg border-0 bg-slate-900/50 px-4 py-3 text-sm text-white placeholder:text-blue-300/30 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-200"
@@ -82,11 +126,13 @@ export default function LoginForm() {
           disabled={loading}
           className="w-full rounded-lg bg-blue-600 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/25 transition-all duration-200 hover:bg-blue-700 hover:shadow-blue-600/40 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? "Connection..." : "Log in"}
+          {loading ? "Creating..." : "Create admin"}
         </button>
 
         <p className="text-center text-xs text-blue-300/40">
-          Secure place - Restricted access
+          <a href="http://localhost:5173/#/login" className="text-blue-400 hover:text-blue-300 transition-colors">
+            Already have an account? Log in
+          </a>
         </p>
       </form>
     </div>

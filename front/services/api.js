@@ -2,8 +2,15 @@ import { getToken } from "@/lib/auth";
 
 async function handleResponse(res) {
   if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(errorText || `HTTP ${res.status}`);
+    const body = await res.text();
+    let message = `HTTP ${res.status}`;
+    try {
+      const parsed = JSON.parse(body);
+      message = parsed.error || parsed.message || body;
+    } catch {
+      message = body || message;
+    }
+    throw new Error(message);
   }
   const contentType = res.headers.get("content-type");
   if (contentType && contentType.includes("application/json")) {

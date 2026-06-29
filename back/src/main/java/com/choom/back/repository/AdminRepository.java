@@ -20,6 +20,30 @@ public class AdminRepository {
 
     private final DBConfig dbConfig;
 
+    public Admin saveAdmin(Admin admin) {
+        String query = """
+                INSERT INTO admin (id, first_name, last_name, email, password_hash)
+                VALUES (?, ?, ?, ?, ?)
+                RETURNING id;
+                """;
+        try (Connection connection = dbConfig.getConnection()) {
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setObject(1, UUID.randomUUID());
+            ps.setString(2, admin.getFirstName());
+            ps.setString(3, admin.getLastName());
+            ps.setString(4, admin.getEmail());
+            ps.setString(5, admin.getPasswordHash());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    admin.setId((UUID) rs.getObject("id"));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error saving admin", e);
+        }
+        return admin;
+    }
+
     public Admin getAdmin (String email) {
         String query = """
                 SELECT id, first_name, last_name, email, password_hash FROM admin
