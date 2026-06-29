@@ -19,6 +19,7 @@ export default function LoginForm() {
     try {
       await login(email, password);
       router.push("/admin");
+      window.location.href = "http://localhost:5173/";
     } catch (err) {
       setError(err.message || "Invalid identifiers");
     } finally {
@@ -71,7 +72,8 @@ export default function LoginForm() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-lg border-0 bg-slate-900/50 px-4 py-3 text-sm text-white placeholder:text-blue-300/30 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-200"
+              className="w-full rounded-lg border-0 bg-slate-900/50 px-4 py-3 text-sm
+               text-white placeholder:text-blue-300/30 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-200"
               placeholder="••••••••"
             />
           </div>
@@ -80,13 +82,16 @@ export default function LoginForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-lg bg-blue-600 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/25 transition-all duration-200 hover:bg-blue-700 hover:shadow-blue-600/40 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full rounded-lg bg-blue-600 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/25
+           transition-all duration-200 hover:bg-blue-700 hover:shadow-blue-600/40 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? "Connection..." : "Log in"}
         </button>
 
         <p className="text-center text-xs text-blue-300/40">
-          Secure place - Restricted access
+          <a href="/register" className="text-blue-400 hover:text-blue-300 transition-colors">
+            First time? Create an admin account
+          </a>
         </p>
       </form>
     </div>
