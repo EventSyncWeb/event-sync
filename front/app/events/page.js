@@ -2,12 +2,16 @@
 
 import { useState, useEffect, useRef } from "react";
 import { getEvents } from "@/services/eventService";
+import { getAllSessions } from "@/services/sessionService";
 import EventList from "@/components/events/EventList";
+import SessionCard from "@/components/sessions/SessionCard";
+import { isLive } from "@/lib/utils";
 
 export default function EventsPage() {
   const [events, setEvents] = useState([]);
   const [query, setQuery] = useState("");
   const [error, setError] = useState(null);
+  const [liveSessions, setLiveSessions] = useState([]);
   const inputRef = useRef(null);
 
   function loadEvents(q) {
@@ -18,6 +22,11 @@ export default function EventsPage() {
 
   useEffect(() => {
     loadEvents();
+    getAllSessions()
+      .then((sessions) => {
+        setLiveSessions(sessions.filter((s) => isLive(s.startTime, s.endTime, s.date)));
+      })
+      .catch(() => {});
   }, []);
 
   function handleSearch() {
@@ -85,10 +94,24 @@ export default function EventsPage() {
           <p className="text-gray-400">
             {query
               ? "No events match your search."
-              : "No upcoming events."}
+              : "No events."}
           </p>
         ) : (
           <EventList events={events} />
+        )}
+
+        {liveSessions.length > 0 && (
+          <section className="mt-8">
+            <h2 className="mb-4 text-xl font-bold text-white">Sessions on Live</h2>
+            <div className="space-y-4">
+              {liveSessions.map((s) => (
+                <SessionCard
+                  key={s.sessionId || s.id}
+                  session={s}
+                />
+              ))}
+            </div>
+          </section>
         )}
       </div>
     </div>
