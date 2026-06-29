@@ -14,6 +14,19 @@ export default function EventsPage() {
   const [liveSessions, setLiveSessions] = useState([]);
   const inputRef = useRef(null);
 
+  function categorizeEvents(list) {
+    const now = new Date();
+    const ongoing = [], upcoming = [], closed = [];
+    for (const e of list) {
+      const start = new Date(e.startDate);
+      const end = new Date(e.endDate);
+      if (now >= start && now <= end) ongoing.push(e);
+      else if (now < start) upcoming.push(e);
+      else closed.push(e);
+    }
+    return { ongoing, upcoming, closed };
+  }
+
   function loadEvents(q) {
     getEvents(q || undefined)
       .then(setEvents)
@@ -97,7 +110,34 @@ export default function EventsPage() {
               : "No events."}
           </p>
         ) : (
-          <EventList events={events} />
+          (() => {
+            const { ongoing, upcoming, closed } = categorizeEvents(events);
+            return (
+              <>
+                {ongoing.length > 0 && (
+                  <section className="mb-8">
+                    <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-white">
+                      <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
+                      Ongoing
+                    </h2>
+                    <EventList events={ongoing} />
+                  </section>
+                )}
+                {upcoming.length > 0 && (
+                  <section className="mb-8">
+                    <h2 className="mb-3 text-lg font-bold text-blue-300">Upcoming</h2>
+                    <EventList events={upcoming} />
+                  </section>
+                )}
+                {closed.length > 0 && (
+                  <section>
+                    <h2 className="mb-3 text-lg font-bold text-slate-500">Closed</h2>
+                    <EventList events={closed} />
+                  </section>
+                )}
+              </>
+            );
+          })()
         )}
 
         {liveSessions.length > 0 && (
