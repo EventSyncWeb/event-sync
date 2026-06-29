@@ -2,13 +2,30 @@
 
 import { useState, useEffect, useRef } from "react";
 import { getEvents } from "@/services/eventService";
+import { getAllSessions } from "@/services/sessionService";
 import EventList from "@/components/events/EventList";
+import SessionCard from "@/components/sessions/SessionCard";
+import { isLive } from "@/lib/utils";
 
 export default function EventsPage() {
   const [events, setEvents] = useState([]);
   const [query, setQuery] = useState("");
   const [error, setError] = useState(null);
+  const [liveSessions, setLiveSessions] = useState([]);
   const inputRef = useRef(null);
+
+  function categorizeEvents(list) {
+    const now = new Date();
+    const ongoing = [], upcoming = [], closed = [];
+    for (const e of list) {
+      const start = new Date(e.startDate);
+      const end = new Date(e.endDate);
+      if (now >= start && now <= end) ongoing.push(e);
+      else if (now < start) upcoming.push(e);
+      else closed.push(e);
+    }
+    return { ongoing, upcoming, closed };
+  }
 
   function loadEvents(q) {
     getEvents(q || undefined)
@@ -18,6 +35,11 @@ export default function EventsPage() {
 
   useEffect(() => {
     loadEvents();
+    getAllSessions()
+      .then((sessions) => {
+        setLiveSessions(sessions.filter((s) => isLive(s.startTime, s.endTime, s.date)));
+      })
+      .catch(() => {});
   }, []);
 
   function handleSearch() {
@@ -85,10 +107,51 @@ export default function EventsPage() {
           <p className="text-gray-400">
             {query
               ? "No events match your search."
-              : "No upcoming events."}
+              : "No events."}
           </p>
         ) : (
-          <EventList events={events} />
+          (() => {
+            const { ongoing, upcoming, closed } = categorizeEvents(events);
+            return (
+              <>
+                {ongoing.length > 0 && (
+                  <section className="mb-8">
+                    <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-white">
+                      <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
+                      Ongoing
+                    </h2>
+                    <EventList events={ongoing} />
+                  </section>
+                )}
+                {upcoming.length > 0 && (
+                  <section className="mb-8">
+                    <h2 className="mb-3 text-lg font-bold text-blue-300">Upcoming</h2>
+                    <EventList events={upcoming} />
+                  </section>
+                )}
+                {closed.length > 0 && (
+                  <section>
+                    <h2 className="mb-3 text-lg font-bold text-slate-500">Closed</h2>
+                    <EventList events={closed} />
+                  </section>
+                )}
+              </>
+            );
+          })()
+        )}
+
+        {liveSessions.length > 0 && (
+          <section className="mt-8">
+            <h2 className="mb-4 text-xl font-bold text-white">Sessions on Live</h2>
+            <div className="space-y-4">
+              {liveSessions.map((s) => (
+                <SessionCard
+                  key={s.sessionId || s.id}
+                  session={s}
+                />
+              ))}
+            </div>
+          </section>
         )}
       </div>
     </div>

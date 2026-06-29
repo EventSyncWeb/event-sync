@@ -453,6 +453,86 @@ public class SessionRepository {
         return false;
     }
 
+    public boolean toggleFavorite(UUID sessionId, String visitorId) {
+        String checkQuery = "SELECT COUNT(*) FROM session_favorite WHERE session_id = ? AND visitor_id = ?";
+        String insertQuery = "INSERT INTO session_favorite (id, session_id, visitor_id) VALUES (gen_random_uuid(), ?, ?)";
+        String deleteQuery = "DELETE FROM session_favorite WHERE session_id = ? AND visitor_id = ?";
+
+        try (Connection connection = dbConfig.getConnection();
+             PreparedStatement checkPs = connection.prepareStatement(checkQuery)) {
+            checkPs.setObject(1, sessionId);
+            checkPs.setString(2, visitorId);
+            ResultSet rs = checkPs.executeQuery();
+            rs.next();
+            if (rs.getInt(1) > 0) {
+                try (PreparedStatement deletePs = connection.prepareStatement(deleteQuery)) {
+                    deletePs.setObject(1, sessionId);
+                    deletePs.setString(2, visitorId);
+                    deletePs.executeUpdate();
+                }
+                return false;
+            } else {
+                try (PreparedStatement insertPs = connection.prepareStatement(insertQuery)) {
+                    insertPs.setObject(1, sessionId);
+                    insertPs.setString(2, visitorId);
+                    insertPs.executeUpdate();
+                }
+                return true;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean isFavorited(UUID sessionId, String visitorId) {
+        String query = "SELECT COUNT(*) FROM session_favorite WHERE session_id = ? AND visitor_id = ?";
+        try (Connection connection = dbConfig.getConnection();
+             PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setObject(1, sessionId);
+            ps.setString(2, visitorId);
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            return rs.getInt(1) > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<Session> findFavoriteSessions(String visitorId) {
+        List<Session> sessionList = new ArrayList<>();
+        String query = """
+                SELECT s.id, s.title, s.description, s.date, s.start_time, s.end_time, s.room_id, s.event_id, r.name AS room_name
+                FROM session s
+                LEFT JOIN room r ON s.room_id = r.id
+                JOIN session_favorite sf ON sf.session_id = s.id
+                WHERE sf.visitor_id = ?
+                ORDER BY s.start_time
+                """;
+
+        try (Connection connection = dbConfig.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, visitorId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                Session session = new Session();
+                session.setId((UUID) resultSet.getObject("id"));
+                session.setTitle(resultSet.getString("title"));
+                session.setDescription(resultSet.getString("description"));
+                session.setDate(resultSet.getDate("date").toLocalDate());
+                session.setStartTime(resultSet.getTime("start_time").toLocalTime());
+                session.setEndTime(resultSet.getTime("end_time").toLocalTime());
+                session.setRoom((UUID) resultSet.getObject("room_id"));
+                session.setRoomName(resultSet.getString("room_name"));
+                session.setEventId((UUID) resultSet.getObject("event_id"));
+                session.setSpeakers(findSpeakersForSession(session.getId()));
+                sessionList.add(session);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return sessionList;
+    }
+
     public List<Session> findSessionsByIds(Collection<UUID> ids) {
         if (ids == null || ids.isEmpty()) return List.of();
         List<Session> sessions = new ArrayList<>();
@@ -479,5 +559,6 @@ public class SessionRepository {
         }
         return sessions;
     }
+
 
 }

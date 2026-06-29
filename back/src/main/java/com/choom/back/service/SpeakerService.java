@@ -3,6 +3,7 @@ package com.choom.back.service;
 import com.choom.back.entity.Session;
 import com.choom.back.entity.Speaker;
 import com.choom.back.exception.BadRequestException;
+import com.choom.back.exception.NotFoundException;
 import com.choom.back.repository.SessionRepository;
 import com.choom.back.repository.SpeakerRepository;
 import lombok.AllArgsConstructor;
@@ -27,7 +28,11 @@ public class SpeakerService {
     }
 
     public Speaker getSpeakerById(UUID id) {
-        return speakerRepository.findSpeakerById(id);
+        Speaker speaker = speakerRepository.findSpeakerById(id);
+        if (speaker == null) {
+            throw new NotFoundException("Speaker not found");
+        }
+        return speaker;
     }
 
     public List<Speaker> getSpeakersBySessionId(UUID sessionId) {

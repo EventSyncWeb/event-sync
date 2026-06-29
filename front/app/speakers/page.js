@@ -12,7 +12,7 @@ export default function SpeakersPage() {
 
   function loadSpeakers(q) {
     getAllSpeakers(q || undefined)
-      .then(setSpeakers)
+      .then((data) => setSpeakers(Array.isArray(data) ? data : []))
       .catch((e) => setError(e.message));
   }
 

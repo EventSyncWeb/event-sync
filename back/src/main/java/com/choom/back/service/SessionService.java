@@ -49,9 +49,6 @@ public class SessionService {
 
     public List<Session> getSessionByEventId(UUID eventId){
         List<Session> sessions = sessionRepository.findSessionByEventId(eventId);
-        if(sessions.isEmpty()){
-            throw new NotFoundException("Session with id " + eventId + " not found");
-        }
         sessions.forEach(s -> s.setOnLive(isOnLive(s)));
         return sessions;
     }
@@ -109,6 +106,23 @@ public class SessionService {
             throw new NotFoundException("Session with id " + id + " not found");
         }
         sessionRepository.deleteSessionById(id);
+    }
+
+    public List<Session> getFavoriteSessions(String visitorId) {
+        List<Session> sessions = sessionRepository.findFavoriteSessions(visitorId);
+        sessions.forEach(s -> s.setOnLive(isOnLive(s)));
+        return sessions;
+    }
+
+    public boolean toggleFavorite(UUID sessionId, String visitorId) {
+        if (!sessionRepository.existsSessionById(sessionId)) {
+            throw new NotFoundException("Session with id " + sessionId + " not found");
+        }
+        return sessionRepository.toggleFavorite(sessionId, visitorId);
+    }
+
+    public boolean getFavoriteStatus(UUID sessionId, String visitorId) {
+        return sessionRepository.isFavorited(sessionId, visitorId);
     }
 
 }

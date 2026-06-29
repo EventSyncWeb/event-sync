@@ -4,18 +4,29 @@ import { useState } from "react";
 import { upvoteQuestion } from "@/services/questionService";
 
 export default function QuestionList({ questions, onUpvote }) {
-  const [upvotedIds, setUpvotedIds] = useState(new Set());
+  const [upvotedIds, setUpvotedIds] = useState(
+    () => new Set(questions.filter((q) => q.votedByCurrentUser).map((q) => q.id)),
+  );
   const [loadingId, setLoadingId] = useState(null);
+  const [errorId, setErrorId] = useState(null);
+  const [errorMsg, setErrorMsg] = useState("");
 
   const handleUpvote = async (id) => {
     if (upvotedIds.has(id) || loadingId) return;
     setLoadingId(id);
+    setErrorId(null);
+    setErrorMsg("");
     try {
       await upvoteQuestion(id);
       setUpvotedIds((prev) => new Set([...prev, id]));
       onUpvote?.(id);
     } catch (err) {
-      console.error("Upvote failed :", err.message);
+      setErrorId(id);
+      setErrorMsg(err.message);
+      setTimeout(() => {
+        setErrorId(null);
+        setErrorMsg("");
+      }, 3000);
     } finally {
       setLoadingId(null);
     }
@@ -23,34 +34,34 @@ export default function QuestionList({ questions, onUpvote }) {
 
   if (!questions || questions.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center gap-2 py-12 text-slate-400 text-center">
+      <div className="flex flex-col items-center justify-center gap-2 py-12 text-blue-300/40 text-center">
         <span className="text-4xl">💬</span>
         <p className="text-sm font-medium">No questions yet.</p>
-        <p className="text-xs">Be the first to ask a question !</p>
+        <p className="text-xs">Be the first to ask a question!</p>
       </div>
     );
   }
 
   const sorted = [...questions].sort(
-    (a, b) => (b.upvotes ?? 0) - (a.upvotes ?? 0),
+    (a, b) => (b.upvoteCount ?? 0) - (a.upvoteCount ?? 0),
   );
 
   return (
-    <ul className="flex flex-col gap-3">
+    <ul className="flex flex-col gap-3 ">
       {sorted.map((q) => (
         <li
           key={q.id}
-          className="bg-white border border-slate-200 rounded-xl px-5 py-4 flex flex-col gap-2 shadow-sm hover:shadow-md transition-shadow"
+          className="bg-slate-800 border border-blue-800/30 rounded-xl px-5 py-4 flex flex-col gap-2 shadow-sm hover:shadow-md transition-shadow"
         >
           {/* Meta */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 ">
             <span className="text-xs font-semibold text-indigo-600">
-              {q.author || "Anonymous"}
+              {q.authorName || "Anonymous"}
             </span>
-            {q.createdAt && (
-              <span className="text-xs text-slate-400">
+            {q.creationDate && (
+              <span className="text-xs text-slate-500">
                 ·{" "}
-                {new Date(q.createdAt).toLocaleDateString("fr-FR", {
+                {new Date(q.creationDate).toLocaleDateString("fr-FR", {
                   day: "numeric",
                   month: "short",
                   hour: "2-digit",
@@ -61,24 +72,29 @@ export default function QuestionList({ questions, onUpvote }) {
           </div>
 
           {/* Content */}
-          <p className="text-sm text-slate-700 leading-relaxed">{q.content}</p>
+          <p className="text-sm text-white leading-relaxed">{q.content}</p>
 
           {/* Upvote */}
-          <button
-            onClick={() => handleUpvote(q.id)}
-            disabled={upvotedIds.has(q.id) || loadingId === q.id}
-            aria-label="Voter pour cette question"
-            className={`self-start flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border transition
-              ${
-                upvotedIds.has(q.id)
-                  ? "border-indigo-400 text-indigo-600 bg-indigo-50"
-                  : "border-slate-200 text-slate-500 hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50"
-              }
-              disabled:cursor-not-allowed`}
-          >
-            <span className="text-[10px]">▲</span>
-            <span>{(q.upvotes ?? 0) + (upvotedIds.has(q.id) ? 1 : 0)}</span>
-          </button>
+          <div className="self-start flex items-center gap-2">
+            <button
+              onClick={() => handleUpvote(q.id)}
+              disabled={upvotedIds.has(q.id) || loadingId === q.id}
+              aria-label="vote for this question"
+              className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border transition
+                ${
+                  upvotedIds.has(q.id)
+                    ? "border-indigo-400 text-indigo-600 bg-indigo-50"
+                    : "border-slate-200 text-slate-500 hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50"
+                }
+                disabled:cursor-not-allowed`}
+            >
+              <span className="text-[10px]">▲</span>
+              <span >{(q.upvoteCount ?? 0)}</span>
+            </button>
+            {errorId === q.id && (
+              <span className="text-xs text-red-400">{errorMsg}</span>
+            )}
+          </div>
         </li>
       ))}
     </ul>
